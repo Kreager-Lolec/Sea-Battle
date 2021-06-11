@@ -4,10 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SeaBattle"
-        mc:Ignorable="d" Width="674.5" Height="697.5">
+        mc:Ignorable="d">
 
-    <StackPanel Name="StackPanel">
-        <StackPanel Orientation="Horizontal">
+    <StackPanel Orientation="Horizontal">
+        <WrapPanel x:Name="Map" Margin="0,0,334,239.2" Width="330" Height="360"/>
+        <WrapPanel x:Name ="EnemyMap" Width="330" Margin="-320,0,0,239.2" Height="360"/>
+    </StackPanel>
+    <!--<StackPanel Orientation="Horizontal">
             <Label x:Name="Start" Width="60" Height="60" Content="" FontFamily="Verdana" Background="AliceBlue" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
             <Label x:Name="A" Width="60" Height="60" Content="A" FontFamily="Verdana" Background="AliceBlue" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
             <Label x:Name="B" Width="60" Height="60" Content="B" FontFamily="Verdana" Background="AliceBlue" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
@@ -149,6 +152,5 @@
             <Button x:Name="btn8pnl10" Width="60" Height="60" Content=" " FontFamily="Verdana" Click="Button_Click" Background="LightGray"/>
             <Button x:Name="btn9pnl10" Width="60" Height="60" Content=" " FontFamily="Verdana" Click="Button_Click" Background="LightGray"/>
             <Button x:Name="btn10pnl10" Width="60" Height="60" Content=" " FontFamily="Verdana" Click="Button_Click" Background="LightGray"/>
-        </StackPanel>
-    </StackPanel>
+        </StackPanel>-->
 </Window>
