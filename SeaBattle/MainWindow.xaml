@@ -4,12 +4,20 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SeaBattle"
-        mc:Ignorable="d">
+        mc:Ignorable="d" Height="572.664" Width="775.136">
 
-    <StackPanel Orientation="Horizontal">
-        <WrapPanel x:Name="Map" Margin="0,0,334,239.2" Width="330" Height="360"/>
-        <WrapPanel x:Name ="EnemyMap" Width="330" Margin="-320,0,0,239.2" Height="360"/>
-    </StackPanel>
+    <WrapPanel Orientation="Horizontal" Width="700" Height="650" Margin="34,0,34.8,-19.8">
+        <WrapPanel x:Name="Map" Margin="0,0,334,239.2" Width="330" Height="434">
+            <Label Content="                     Your Map" Height="35" Width="331" FontSize="20" Background="Bisque"/>
+        </WrapPanel>
+        <WrapPanel x:Name="Shipmap" Margin="-320,0,0,239.2" Width="330" Height="434">
+            <Label Content="                Available Ships" Height="35" Width="331" FontSize="20" Background="Bisque"/>
+        </WrapPanel>
+        <WrapPanel x:Name ="EnemyMap" Width="330" Margin="-320,0,0,239.2" Height="434" Visibility="Hidden">
+            <Label Content="                     Enemy Map" Height="35" Width="331" FontSize="20" Background="Bisque"/>
+        </WrapPanel>
+        <Button Content="Start" Width="75" Height="32" Margin="0,-400,0,100" Click="Button_Click"/>
+    </WrapPanel>
     <!--<StackPanel Orientation="Horizontal">
             <Label x:Name="Start" Width="60" Height="60" Content="" FontFamily="Verdana" Background="AliceBlue" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
             <Label x:Name="A" Width="60" Height="60" Content="A" FontFamily="Verdana" Background="AliceBlue" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
