@@ -31,7 +31,64 @@ namespace SeaBattle
             InitializeComponent();
             Init();
         }
+        public static int[][] CreateArray(int rows, int cells)
+        {
+            int[][] array = new int[rows][];
+            for (int i = 0; i < rows; i++)
+                array[i] = new int[cells];
+            for (int i = 0; i < rows; i++)
+                for (int j = 0; j < cells; j++)
+                    array[i][j] = 0;
+            return array;
+        }
 
+        public class Location
+        {
+            public int row = -1;
+            public int cell = -1;
+            public bool shipCellAlive = false;
+            public void SetLocation(int row, int cell)
+            {
+                this.row = row;
+                this.cell = cell;
+            }
+            public void ResetLocation()
+            {
+                row = -1;
+                cell = -1;
+            }
+        }
+        public class GameField
+        {
+            List<Ship> ships = new List<Ship>();
+            public int[][] FieldState()
+            {
+                int[][] fs = CreateArray(10, 10);
+                foreach (Ship s in ships)
+                {
+                    foreach  (Location sl in s.location)
+                    {
+                        
+                    }
+                }
+            }
+        }
+
+        public class Ship
+        {
+            public List<Location> location = new List<Location>();//Add info about shipcell
+            public void CountCells()
+            {
+                int cellCounter = 0;
+                foreach (Location l in location)
+                {
+                    if (l != default)
+                    {
+                        cellCounter++;
+                    }
+                }
+            }
+        }
         public void Init()
         {
             try
@@ -43,6 +100,10 @@ namespace SeaBattle
 
                 Console.WriteLine(ex.Message);
             }
+        }
+        public void RefreshField()
+        {
+
         }
         public void CreateMap()
         {
@@ -119,6 +180,7 @@ namespace SeaBattle
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+
             EnemyMap.Visibility = Visibility.Visible;
             Shipmap.Visibility = Visibility.Hidden;
         }
