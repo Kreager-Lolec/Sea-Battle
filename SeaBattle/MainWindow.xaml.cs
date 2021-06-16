@@ -20,16 +20,32 @@ namespace SeaBattle
     /// </summary>
     public partial class MainWindow : Window
     {
+        int sessionnumber = 0;
+        Button[][] userButtons;
+        Button[][] enemyButtons;
+        Button[][] availableShipButton;
         const int mapsize = 11;
         int cellsize = 30;
         string namecell = "ABCDEFGHIJ";
-        int[,] map = new int[mapsize, mapsize];
-        int[,] enemymap = new int[mapsize, mapsize];
-        int[,] shipmap = new int[mapsize, mapsize];
         public MainWindow()
         {
             InitializeComponent();
-            Init();
+            try
+            {
+                GameField field = new GameField();
+                userButtons = CreateUIField();
+                enemyButtons = CreateUIField();
+                availableShipButton = CreateUIField();
+                Init();
+                //MessageBox.Show(field.ships[0].locations[0].cell + " " + field.ships[0].locations[0].row);
+                field.DisplayField(field.LocationsActivity(), ref userButtons);
+                field.DisplayField(field.LocationsActivity(), ref enemyButtons);
+                field.DisplayField(field.LocationsActivity(), ref availableShipButton);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
         public static int[][] CreateArray(int rows, int cells)
         {
@@ -42,7 +58,7 @@ namespace SeaBattle
             return array;
         }
 
-        public class Location
+        public class Location//Class, which save position of one cell of ship
         {
             public int row = -1;
             public int cell = -1;
@@ -58,29 +74,65 @@ namespace SeaBattle
                 cell = -1;
             }
         }
-        public class GameField
+        public class GameField//Class, which save information about state of field
         {
-            List<Ship> ships = new List<Ship>();
-            public int[][] FieldState()
+            public List<Ship> ships = new List<Ship>();
+            public GameField()//Default contructor
+            {
+                Ship s = new Ship();
+                s.locations = new List<Location>();
+                Location l = new Location();
+                l.row = 0;
+                l.cell = 0;
+                s.locations.Add(l);
+                ships.Add(s);
+            }
+            public int[][] LocationsActivity()//Method, in which we change state of cell of ship (If cell of ship is alive or no)
             {
                 int[][] fs = CreateArray(10, 10);
                 foreach (Ship s in ships)
                 {
-                    foreach  (Location sl in s.location)
+                    try
                     {
-                        
+                        foreach (Location sl in s.locations)
+                        {
+                            if (sl.shipCellAlive)
+                            {
+                                fs[sl.row][sl.cell] = 1;
+                            }
+                            else
+                            {
+                                fs[sl.row][sl.cell] = 2;
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                    }
+                }
+                return fs;
+            }
+            public void DisplayField(int[][] fs, ref Button[][] buttons)//According to state of cells of ships, method fills up array with numbers 1 or 2
+            {
+                for (int i = 0; i < fs.Length; i++)
+                {
+                    MessageBox.Show(fs[i][0].ToString());
+                    for (int j = 0; j < fs[i].Length; j++)
+                    {
+                        buttons[i][j].Content = fs[i][j].ToString();
                     }
                 }
             }
         }
 
-        public class Ship
+        public class Ship//Class, which determine size of ship
         {
-            public List<Location> location = new List<Location>();//Add info about shipcell
+            public List<Location> locations = new List<Location>();//Add info about shipcell
             public void CountCells()
             {
                 int cellCounter = 0;
-                foreach (Location l in location)
+                foreach (Location l in locations)
                 {
                     if (l != default)
                     {
@@ -91,39 +143,44 @@ namespace SeaBattle
         }
         public void Init()
         {
-            try
-            {
-                CreateMap();
-            }
-            catch (Exception ex)
-            {
-
-                Console.WriteLine(ex.Message);
-            }
+            CreateMap();
         }
         public void RefreshField()
         {
 
         }
-        public void CreateMap()
+        public Button[][] CreateUIField(int rows = mapsize - 1, int cells = mapsize - 1)//Creating array of buttons (Need to connect this array with panels (UI))
+        {
+            Button[][] buttons = new Button[rows][];
+            for (int i = 0; i < rows; i++)
+                buttons[i] = new Button[cells];
+            for (int i = 0; i < rows; i++)
+                for (int j = 0; j < cells; j++)
+                    buttons[i][j] = new Button();
+            return buttons;
+        }
+        public void CreateMap()//Method, which creates maps
         {
             for (int i = 0; i < mapsize; i++)
             {
                 for (int j = 0; j < mapsize; j++)
                 {
-                    map[i, j] = 0;
                     Button button = new Button();
                     if (i == 0 || j == 0)
                     {
                         button.Background = new SolidColorBrush(Colors.Gray);
                         if (i == 0 && j > 0)
                         {
-                            button.Content = namecell[j-1].ToString();
+                            button.Content = namecell[j - 1].ToString();
                         }
                         else if (j == 0 && i > 0)
                         {
                             button.Content = i.ToString();
                         }
+                    }
+                    else
+                    {
+                        userButtons[i - 1][j - 1] = button;
                     }
                     button.Width = cellsize;
                     button.Height = cellsize;
@@ -134,7 +191,6 @@ namespace SeaBattle
             {
                 for (int j = 0; j < mapsize; j++)
                 {
-                    enemymap[i, j] = 0;
                     Button button = new Button();
                     if (i == 0 || j == 0)
                     {
@@ -147,6 +203,10 @@ namespace SeaBattle
                         {
                             button.Content = i.ToString();
                         }
+                    }
+                    else
+                    {
+                        enemyButtons[i - 1][j - 1] = button;
                     }
                     button.Width = cellsize;
                     button.Height = cellsize;
@@ -157,7 +217,6 @@ namespace SeaBattle
             {
                 for (int j = 0; j < mapsize; j++)
                 {
-                    shipmap[i, j] = 0;
                     Button button = new Button();
                     if (i == 0 || j == 0)
                     {
@@ -171,6 +230,10 @@ namespace SeaBattle
                             button.Content = i.ToString();
                         }
                     }
+                    else
+                    {
+                        availableShipButton[i - 1][j - 1] = button;
+                    }
                     button.Width = cellsize;
                     button.Height = cellsize;
                     Shipmap.Children.Add(button);
@@ -180,7 +243,7 @@ namespace SeaBattle
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-
+            //sessionnumber++;
             EnemyMap.Visibility = Visibility.Visible;
             Shipmap.Visibility = Visibility.Hidden;
         }
