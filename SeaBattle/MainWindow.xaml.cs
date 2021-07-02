@@ -17,9 +17,13 @@ namespace SeaBattle
 {
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
+    /// Відслідковувати розмір корабля в класі GameField та коректно відображати його на полі (Добавляти координати кораблів в методі CheckPartition)!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     /// </summary>
     public partial class MainWindow : Window
     {
+        GameField userField = new GameField();
+        GameField enemyField = new GameField();
+        GameField availableShipField = new GameField();
         int sessionnumber = 0;
         Button[][] userButtons;
         Button[][] enemyButtons;
@@ -32,9 +36,6 @@ namespace SeaBattle
             InitializeComponent();
             try
             {
-                GameField userField = new GameField();
-                GameField enemyField = new GameField();
-                GameField availableShipField = new GameField();
                 userButtons = CreateUIField();
                 enemyButtons = CreateUIField();
                 availableShipButton = CreateUIField();
@@ -43,7 +44,7 @@ namespace SeaBattle
                 userField.DisplayField(userField.LocationsActivity(), ref userButtons);
                 enemyField.DisplayField(enemyField.LocationsActivity(), ref enemyButtons);
                 availableShipField.DisplayField(availableShipField.LocationsActivity(), ref availableShipButton);
-
+                ShowAvailableShip();
             }
             catch (Exception ex)
             {
@@ -67,10 +68,21 @@ namespace SeaBattle
             public int row = -1;
             public int cell = -1;
             public bool shipCellAlive = false;
+            public Location()
+            {
+
+            }
+            public Location(int row, int cell)
+            {
+                this.row = row;
+                this.cell = cell;
+                shipCellAlive = true;
+            }
             public void SetLocation(int row, int cell)
             {
                 this.row = row;
                 this.cell = cell;
+                shipCellAlive = true;
             }
             public void ResetLocation()
             {
@@ -81,6 +93,10 @@ namespace SeaBattle
         public class GameField//Class, which save information about state of field
         {
             public List<Ship> ships = new List<Ship>();
+            int fourcellship = 1;
+            int threeCellships = 2;
+            int twoCellShips = 3;
+            int oneCellShips = 4;
             public GameField()//Default contructor
             {
                 Ship s = new Ship();
@@ -90,6 +106,102 @@ namespace SeaBattle
                 l.cell = 0;
                 s.locations.Add(l);
                 ships.Add(s);
+            }
+
+            public void AddCellShip(int row, int checkCell, int currentCell, ref int typeOfShip)
+            {
+                bool breakOperand = false;
+                foreach (var s in ships)
+                {
+                    foreach (var l in s.locations)
+                    {
+                        MessageBox.Show(l.row.ToString() + " " + l.cell.ToString());
+                        if (l.row == row && l.cell == checkCell)
+                        {
+                            if (s.CountCells() == 3 && fourcellship == 1)
+                            {
+                                typeOfShip = 4;
+                                fourcellship--;
+                                threeCellships++;
+                            }
+                            else if (s.CountCells() == 2 && threeCellships > 0 && threeCellships <= 2)
+                            {
+                                typeOfShip = 3;
+                                threeCellships--;
+                                twoCellShips++;
+                            }
+                            else if (s.CountCells() == 1 && twoCellShips > 0 && twoCellShips <= 3)
+                            {
+                                typeOfShip = 2;
+                                twoCellShips--;
+                                oneCellShips++;
+                            }
+                            else if (s.CountCells() == 0 && oneCellShips > 0 && oneCellShips <= 4)
+                            {
+                                typeOfShip = 1;
+                                oneCellShips--;
+                            }
+                            else
+                            {
+                                breakOperand = true;
+                                break;
+                            }
+                            s.locations.Add(new Location(row, currentCell));
+                            MessageBox.Show($"Added cell with index: {row} and {currentCell} and State of cell {l.shipCellAlive} ");
+                            breakOperand = true;
+                            break;
+                        }
+                    }
+                    if (breakOperand)
+                    {
+                        break;
+                    }
+                }
+            }
+            public void AddRowShip(int checkRow, int cell, int currentRow, ref int typeOfShip)
+            {
+                bool breakOperand = false;
+                foreach (var s in ships)
+                {
+                    foreach (var l in s.locations)
+                    {
+                        if (l.row == checkRow && l.cell == cell)
+                        {
+                            if (s.CountCells() == 3 && fourcellship == 1)
+                            {
+                                typeOfShip = 4;
+                                fourcellship--;
+                                threeCellships++;
+                            }
+                            else if (s.CountCells() == 2 && threeCellships > 0 && threeCellships <= 2)
+                            {
+                                typeOfShip = 3;
+                                threeCellships--;
+                                twoCellShips++;
+                            }
+                            else if (s.CountCells() == 1 && twoCellShips > 0 && twoCellShips <= 3)
+                            {
+                                typeOfShip = 2;
+                                twoCellShips--;
+                                oneCellShips++;
+                            }
+                            else if (s.CountCells() == 0 && oneCellShips > 0 && oneCellShips <= 4)
+                            {
+                                typeOfShip = 1;
+                                oneCellShips--;
+                            }
+                            else
+                            {
+                                breakOperand = true;
+                                break;
+                            }
+                            s.locations.Add(new Location(currentRow, cell));
+                            MessageBox.Show($"Added cell with index: {currentRow} and {l.cell} ");
+                            breakOperand = true;
+                            break;
+                        }
+                    }
+                }
             }
             public int[][] LocationsActivity()//Method, in which we change state of cell of ship (If cell of ship is alive or no)
             {
@@ -104,10 +216,10 @@ namespace SeaBattle
                             {
                                 fs[sl.row][sl.cell] = 1;
                             }
-                            else
-                            {
-                                fs[sl.row][sl.cell] = 2;
-                            }
+                            //else
+                            //{
+                            //    fs[sl.row][sl.cell] = 2;
+                            //}
                         }
                     }
                     catch (Exception ex)
@@ -133,7 +245,7 @@ namespace SeaBattle
         public class Ship//Class, which determine size of ship
         {
             public List<Location> locations = new List<Location>();//Add info about shipcell
-            public void CountCells()
+            public int CountCells()
             {
                 int cellCounter = 0;
                 foreach (Location l in locations)
@@ -143,6 +255,7 @@ namespace SeaBattle
                         cellCounter++;
                     }
                 }
+                return cellCounter;
             }
         }
         public void Init()
@@ -190,7 +303,7 @@ namespace SeaBattle
                         userButtons[i - 1][j - 1].Width = cellsize;
                         userButtons[i - 1][j - 1].Height = cellsize;
                         userButtons[i - 1][j - 1].Background = Brushes.LightGray;
-                        userButtons[i - 1][j - 1].Tag = i.ToString() + j.ToString();
+                        //userButtons[i - 1][j - 1].Tag = i.ToString() + j.ToString();
                         userButtons[i - 1][j - 1].Click += AddUserShip;
                         Map.Children.Add(userButtons[i - 1][j - 1]);
                         //userButtons[i - 1][j - 1] = button;
@@ -263,38 +376,186 @@ namespace SeaBattle
             }
         }
 
+        public void ShowAvailableShip()
+        {
+            availableShipButton[1][1].Background = Brushes.Red;
+            availableShipButton[2][1].Background = Brushes.Red;
+            availableShipButton[3][1].Background = Brushes.Red;
+            availableShipButton[4][1].Background = Brushes.Red;
+            availableShipButton[2][3].Background = Brushes.Blue;
+            availableShipButton[3][3].Background = Brushes.Blue;
+            availableShipButton[4][3].Background = Brushes.Blue;
+            availableShipButton[2][5].Background = Brushes.Blue;
+            availableShipButton[3][5].Background = Brushes.Blue;
+            availableShipButton[4][5].Background = Brushes.Blue;
+            availableShipButton[6][1].Background = Brushes.Purple;
+            availableShipButton[7][1].Background = Brushes.Purple;
+            availableShipButton[6][3].Background = Brushes.Purple;
+            availableShipButton[7][3].Background = Brushes.Purple;
+            availableShipButton[6][5].Background = Brushes.Purple;
+            availableShipButton[7][5].Background = Brushes.Purple;
+            availableShipButton[1][7].Background = Brushes.Black;
+            availableShipButton[3][7].Background = Brushes.Black;
+            availableShipButton[5][7].Background = Brushes.Black;
+            availableShipButton[7][7].Background = Brushes.Black;
+        }
+
         private void Start(object sender, RoutedEventArgs e)
         {
             sessionnumber++;
             EnemyMap.Visibility = Visibility.Visible;
             Shipmap.Visibility = Visibility.Hidden;
         }
-
-        public void AddUserShip(object sender, RoutedEventArgs e)//This method is used for checking what button has pressed, and then color of this button will changed
-                                                                 //to red, so it will cell of current ship
+        public Location GetButtonIndex(Button button)
         {
-            Button pressedButton = sender as Button;
             for (int i = 0; i < userButtons.Length; i++)
             {
                 for (int j = 0; j < userButtons[i].Length; j++)
                 {
-                    if (pressedButton.Tag == userButtons[i][j].Tag)
+                    if (button == userButtons[i][j])
                     {
-                        pressedButton = userButtons[i][j];
+                        return new Location(i, j);
+                    }
+                }
+            }
+            return new Location();
+        }
+        public bool CheckPartition(Location l, int[][] fs, ref int typeOfShip)
+        {
+            for (int i = l.row; i < fs.Length; i++)
+            {
+                if (l.row == 9)
+                {
+                    break;
+                }
+                if (i - l.row == 3)
+                {
+                    //MessageBox.Show("Hello suka, you catch gay panic");
+                    break;
+                }
+                if (fs[i][l.cell] == 1)
+                {
+                    userField.AddRowShip(i, l.cell, l.row, ref typeOfShip);
+                    return true;
+                }
+            }
+            for (int i = l.row; i >= 0; i--)
+            {
+                if (l.row == 0)
+                {
+                    break;
+                }
+                if (i - l.row == 3)
+                {
+                    //MessageBox.Show("Hello suka, you catch gay panic");
+                    break;
+                }
+                if (fs[i][l.cell] == 1)
+                {
+                    userField.AddRowShip(i, l.cell, l.row, ref typeOfShip);
+                    return true;
+                }
+            }
+            for (int j = l.cell; j < fs[l.row].Length; j++)
+            {
+                if (l.cell == 9)
+                {
+                    break;
+                }
+                if (j - l.cell == 3)
+                {
+                    //MessageBox.Show("Hello suka, you catch gay panic");
+                    break;
+                }
+                if (fs[l.row][j] == 1)
+                {
+                    userField.AddCellShip(l.row, j, l.cell, ref typeOfShip);
+                    return true;
+                }
+            }
+            for (int j = l.cell; j >= 0; j--)
+            {
+                if (l.cell == 0)
+                {
+                    break;
+                }
+                if (j - l.cell == 3)
+                {
+                    //MessageBox.Show("Hello suka, you catch gay panic");
+                    break;
+                }
+                MessageBox.Show(fs[l.row][j].ToString());
+                if (fs[l.row][j] == 1)
+                {
+                    userField.AddCellShip(l.row, j, l.cell, ref typeOfShip);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void AddUserShip(object sender, RoutedEventArgs e)//This method is used for checking what button has pressed, and then color of this button will changed
+                                                                 //to red, so it will cell of current ship
+        {
+            try
+            {
+                int typeOfShip = 0;
+                Button pressedButton = sender as Button;
+                for (int i = 0; i < userButtons.Length; i++)
+                {
+                    for (int j = 0; j < userButtons[i].Length; j++)
+                    {
+                        if (pressedButton == userButtons[i][j])
+                        {
+                            Location l = new Location();
+                            l.SetLocation(i, j);
+                            if (CheckPartition(l, userField.LocationsActivity(), ref typeOfShip))
+                            {
+                                if (typeOfShip == 4)
+                                {
+                                    pressedButton.Background = Brushes.Red;
+                                    pressedButton.Content = "1";
+                                }
+                                else if (typeOfShip == 3)
+                                {
+                                    pressedButton.Background = Brushes.Blue;
+                                    pressedButton.Content = "1";
+                                }
+                                else if (typeOfShip == 2)
+                                {
+                                    pressedButton.Background = Brushes.Purple;
+                                    pressedButton.Content = "1";
+                                }
+                                else if (typeOfShip == 1)
+                                {
+                                    pressedButton.Background = Brushes.Black;
+                                    pressedButton.Content = "1";
+                                }
+                                break;
+                            }
+                            else
+                            {
+                                Ship s = new Ship();
+                                Location l1 = new Location();
+                                l1.SetLocation(i, j);
+                                s.locations.Add(l1);
+                                userField.ships.Add(s);
+                                pressedButton.Background = Brushes.Black;
+                                pressedButton.Content = "1";
+                                break;
+                            }
+                        }
+                    }
+                    if (pressedButton.Content.ToString() == "1")
+                    {
                         break;
                     }
                 }
             }
-            if (sessionnumber == 0)
+            catch (Exception ex)
             {
-                if (pressedButton.Background == Brushes.LightGray)
-                {
-                    pressedButton.Background = Brushes.Red;
-                }
-                else
-                {
-                    pressedButton.Background = Brushes.LightGray;
-                }
+                MessageBox.Show(ex.ToString());
+                throw;
             }
         }
     }
