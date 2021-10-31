@@ -1,0 +1,16 @@
+[28.10.2021 16:46:02] -> Searched row: 1 Searched cell: 1.
+[28.10.2021 16:46:03] -> Searched row: 1 Searched cell: 1.
+[28.10.2021 16:46:03] -> Searched row: 2 Searched cell: 1.
+[28.10.2021 16:46:03] -> Searched row: 1 Searched cell: 1.
+[28.10.2021 16:46:03] -> Searched row: 2 Searched cell: 1.
+[28.10.2021 16:46:03] -> Searched row: 3 Searched cell: 1.
+[28.10.2021 16:46:03] -> Searched row: 1 Searched cell: 1.
+[28.10.2021 16:46:03] -> Searched row: 2 Searched cell: 1.
+[28.10.2021 16:46:03] -> Searched row: 3 Searched cell: 1.
+[28.10.2021 16:46:03] -> Searched row: 4 Searched cell: 1.
+[28.10.2021 16:46:05] -> Searched row: 1 Searched cell: 1.
+[28.10.2021 16:46:05] -> Searched row: 2 Searched cell: 1.
+[28.10.2021 16:46:05] -> Searched row: 4 Searched cell: 1.
+[28.10.2021 16:46:06] -> Searched row: 1 Searched cell: 1.
+[28.10.2021 16:46:06] -> Searched row: 2 Searched cell: 1.
+[28.10.2021 16:46:06] -> Searched row: 4 Searched cell: 1.
