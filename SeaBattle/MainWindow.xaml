@@ -17,7 +17,11 @@
             <Label Content="                     Enemy Map" Height="35" Width="331" FontSize="20" Background="Bisque"/>
         </WrapPanel>
         <Button Content="Start" Width="75" Height="32" Margin="0,-400,0,100" Click="Start"/>
+        <Button Content="Clear Field" Width="75" Height="32" Margin="20,-400,0,100" Click="ClearField"/>
+        <Button Content="Delete Ship" Width="75" Height="32" Margin="20,-400,0,100" Click="DeleteMode"/>
         <ListBox Height="100" Width="100" RenderTransformOrigin="0.947,-1.714"/>
+        <WrapPanel Name="ButtonMap" Height="32" Width="150"  Margin="-200,-320,0,100">
+        </WrapPanel>
     </WrapPanel>
     <!--<StackPanel Orientation="Horizontal">
             <Label x:Name="Start" Width="60" Height="60" Content="" FontFamily="Verdana" Background="AliceBlue" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
