@@ -1,4 +1,3 @@
-D:\C#projects\SeaBattle\SeaBattle\obj\Debug\SeaBattle.csproj.AssemblyReference.cache
 D:\C#projects\SeaBattle\SeaBattle\obj\Debug\MainWindow.g.cs
 D:\C#projects\SeaBattle\SeaBattle\obj\Debug\App.g.cs
 D:\C#projects\SeaBattle\SeaBattle\obj\Debug\SeaBattle_MarkupCompile.cache
