@@ -28,6 +28,14 @@ namespace SeaBattle
         int cellsize = 30;
         string namecell = "ABCDEFGHIJ";
         static private string logPath = "log.txt";
+        static public Brush fourCellColor = Brushes.Green;
+        static public Brush threeCellColor = Brushes.Blue;
+        static public Brush twoCellColor = Brushes.Purple;
+        static public Brush oneCellColor = Brushes.DarkOrange;
+        static public Brush defaultCellColor = Brushes.LightGray;
+        static public Brush usedCellColor = Brushes.DarkGray;
+        static public Brush brokenCellColor = Brushes.Red;
+        static public bool displayContent = true;
         /// <summary>
         /// Method, which write information to the log
         /// </summary>
@@ -159,42 +167,14 @@ namespace SeaBattle
                 }
                 return false;
             }
-            /// <summary>
-            /// This method return ship to the map of the available ships
-            /// </summary>
-            /// <param name="length"></param>
-            public void ReturnAvs(int length)
+
+            public bool DoExistAllShips()
             {
-                Ship ship = new Ship();
-                if (length == 4)
+                if (fourcellship == 1 && threeCellships == 2 && twoCellShips == 3 && oneCellShips == 4)
                 {
-                    ship.locations.Add(new Location(1, 1));
-                    ship.locations.Add(new Location(2, 1));
-                    ship.locations.Add(new Location(3, 1));
-                    ship.locations.Add(new Location(4, 1));
-                    ships.Add(ship);
-                    foreach (var loc in ship.locations)
-                    {
-                        availableShipButton[loc.row][loc.cell].Content = "1";
-                        availableShipButton[loc.row][loc.cell].Background = Brushes.Red;
-                    }
+                    return false;
                 }
-                else if (length == 3)
-                {
-                    //if ()
-                    //{
-
-                    //}
-                }
-                else if (length == 2)
-                {
-
-                }
-                else if (length == 1)
-                {
-
-                }
-
+                return true;
             }
             /// <summary>
             /// Method find coincidence in adress of activated cell and button. According to the type of the ship, program reset location of chosen button, and unificate all buttons of the current ship
@@ -207,7 +187,7 @@ namespace SeaBattle
             //    foreach (var l in SearchShipG(row, cell).locations)
             //    {
             //        userButtons[l.row][l.cell].Content = "0";
-            //        userButtons[l.row][l.cell].Background = Brushes.LightGray;
+            //        userButtons[l.row][l.cell].Background = defaultCellColor;
             //    }
             //    ReturnAvs(SearchShipG(row, cell).CountCells());
             //    ships.Remove(SearchShipG(row, cell));
@@ -228,7 +208,6 @@ namespace SeaBattle
                                 if (ship.CountCells() == 4)
                                 {
                                     location.shipCellAlive = false;
-                                    int whatShipAdd = 1;//This value is used to check in what order ships would be created.
                                     int countEntireShip = 0;
                                     Ship s1 = new Ship();
                                     Ship s2 = new Ship();
@@ -255,6 +234,22 @@ namespace SeaBattle
                                             ships.Add(s2);
                                             continue;
                                         }
+                                    }
+                                    if (s2.CountCells() == 1 && oneCellShips >= 4)
+                                    {
+                                        s2.brokenShip = true;
+                                    }
+                                    else if (s2.CountCells() == 2 && twoCellShips >= 3)
+                                    {
+                                        s2.brokenShip = true;
+                                    }
+                                    if (s1.CountCells() == 1 && oneCellShips >= 4)
+                                    {
+                                        s1.brokenShip = true;
+                                    }
+                                    else if (s1.CountCells() == 2 && twoCellShips >= 3)
+                                    {
+                                        s1.brokenShip = true;
                                     }
                                     ships.Add(s1);
                                     ships.Remove(ship);
@@ -286,24 +281,33 @@ namespace SeaBattle
                                         else if (!loc.shipCellAlive && countEntireShip < 2)
                                         {
                                             createNewShip = true;
+                                            if (oneCellShips >= 2)
+                                            {
+                                                s4.brokenShip = true;
+                                            }
                                             ships.Add(s4);
                                             continue;
                                         }
                                     }
                                     ships.Remove(ship);
+                                    if (oneCellShips >= 2)
+                                    {
+                                        s3.brokenShip = true;
+                                    }
                                     ships.Add(s3);
                                     break;
                                 }
                                 else if (ship.CountCells() == 2)
                                 {
-                                    //twoCellShips++;
-                                    //oneCellShips--;
                                     ship.locations.Remove(location);
+                                    if (oneCellShips >= 4)
+                                    {
+                                        ship.brokenShip = true;
+                                    }
                                     break;
                                 }
                                 else if (ship.CountCells() == 1)
                                 {
-                                    //oneCellShips++;
                                     ships.Remove(ship);
                                     break;
                                 }
@@ -325,82 +329,85 @@ namespace SeaBattle
             /// <param name="userButtons"></param>
             public void ChooseShip(ref Button[][] userButtons, Ship ship, int OCS = 0, int TCS = 0, int THCS = 0)
             {
-                if (ship.CountCells() == 4)
+                if (!ship.brokenShip)
                 {
-                    foreach (var l in ship.locations)
-                    {
-                        userButtons[l.row][l.cell].Background = Brushes.Red;
-                    }
-                }
-                else if (ship.CountCells() == 3)
-                {
-                    if (THCS <= 2)
+                    if (ship.CountCells() == 4)
                     {
                         foreach (var l in ship.locations)
                         {
-                            userButtons[l.row][l.cell].Background = Brushes.Blue;
+                            userButtons[l.row][l.cell].Background = fourCellColor;
                         }
                     }
-                    else if (THCS > 2)
+                    else if (ship.CountCells() == 3)
                     {
-                        foreach (var l in ship.locations)
+                        if (THCS <= 2)
                         {
-                            userButtons[l.row][l.cell].Background = Brushes.Red;
+                            foreach (var l in ship.locations)
+                            {
+                                userButtons[l.row][l.cell].Background = threeCellColor;
+                            }
+                        }
+                        else if (THCS > 2)
+                        {
+                            foreach (var l in ship.locations)
+                            {
+                                userButtons[l.row][l.cell].Background = fourCellColor;
+                            }
                         }
                     }
-                }
-                else if (ship.CountCells() == 2)
-                {
-                    if (TCS > 3)
+                    else if (ship.CountCells() == 2)
                     {
-                        foreach (var l in ship.locations)
+                        if (TCS > 3 && THCS < 2)
                         {
-                            userButtons[l.row][l.cell].Background = Brushes.Blue;
+                            foreach (var l in ship.locations)
+                            {
+                                userButtons[l.row][l.cell].Background = threeCellColor;
+                            }
+                        }
+                        else if (TCS <= 3)
+                        {
+                            foreach (var l in ship.locations)
+                            {
+                                userButtons[l.row][l.cell].Background = twoCellColor;
+                            }
+                        }
+                        else if (THCS >= 2)
+                        {
+                            foreach (var l in ship.locations)
+                            {
+                                userButtons[l.row][l.cell].Background = fourCellColor;
+                            }
                         }
                     }
-                    else if (TCS <= 3)
+                    else if (ship.CountCells() == 1)
                     {
-                        foreach (var l in ship.locations)
+                        if (OCS <= 4)
                         {
-                            userButtons[l.row][l.cell].Background = Brushes.Purple;
+                            foreach (var l in ship.locations)
+                            {
+                                userButtons[l.row][l.cell].Background = oneCellColor;
+                            }
                         }
-                    }
-                    else if (THCS >= 2)
-                    {
-                        foreach (var l in ship.locations)
+                        else if (OCS > 4 && TCS < 3)
                         {
-                            userButtons[l.row][l.cell].Background = Brushes.Red;
+                            foreach (var l in ship.locations)
+                            {
+                                userButtons[l.row][l.cell].Background = twoCellColor;
+                            }
                         }
-                    }
-                }
-                else if (ship.CountCells() == 1)
-                {
-                    if (OCS <= 4)
-                    {
-                        foreach (var l in ship.locations)
+                        else if (TCS >= 3 && THCS < 2)
                         {
-                            userButtons[l.row][l.cell].Background = Brushes.Black;
+                            foreach (var l in ship.locations)
+                            {
+                                userButtons[l.row][l.cell].Background = threeCellColor;
+                            }
                         }
-                    }
-                    else if (OCS > 4)
-                    {
-                        foreach (var l in ship.locations)
+                        else if (THCS >= 2)
                         {
-                            userButtons[l.row][l.cell].Background = Brushes.Purple;
-                        }
-                    }
-                    else if (TCS >= 3)
-                    {
-                        foreach (var l in ship.locations)
-                        {
-                            userButtons[l.row][l.cell].Background = Brushes.Blue;
-                        }
-                    }
-                    else if (THCS >= 2)
-                    {
-                        foreach (var l in ship.locations)
-                        {
-                            userButtons[l.row][l.cell].Background = Brushes.Red;
+                            foreach (var l in ship.locations)
+                            {
+                                userButtons[l.row][l.cell].Background = fourCellColor;
+                            }
                         }
                     }
                 }
@@ -431,7 +438,10 @@ namespace SeaBattle
                                     break;
                                 }
                             }
-                            if (fourcellship >= 1 && s.CountCells() == 4) { break; }
+                            if (fourcellship >= 1 && s.CountCells() == 4)
+                            {
+                                break;
+                            }
                             else if (fourcellship < 1)
                             {
                                 if (s.CountCells() == 3 || s.CountCells() == 2)
@@ -440,7 +450,11 @@ namespace SeaBattle
                                     userButtons[row][currentCell].Content = "1";
                                 }
                             }
-                            if (threeCellships >= 2 && s.CountCells() == 3) { break; }
+                            if (threeCellships >= 2 && s.CountCells() == 3)
+                            {
+                                breakOperand = true;
+                                break;
+                            }
                             else if (threeCellships < 2)
                             {
                                 if (s.CountCells() == 2 || s.CountCells() == 1)
@@ -451,16 +465,13 @@ namespace SeaBattle
                             }
                             if (twoCellShips >= 3 && s.CountCells() == 2)
                             {
+                                breakOperand = true;
                                 break;
                             }
                             else if (twoCellShips < 3 && s.CountCells() == 1)
                             {
                                 s.locations.Add(new Location(row, currentCell));//Add cell to the existing ship
                                 userButtons[row][currentCell].Content = "1";
-                            }
-                            if (oneCellShips >= 4 && s.CountCells() == 1)
-                            {
-                                break;
                             }
                             breakOperand = true;
                             break;
@@ -567,35 +578,50 @@ namespace SeaBattle
                         else
                         {
                             buttons[i][j].Content = "0";
-                            buttons[i][j].Background = Brushes.LightGray;
+                            buttons[i][j].Background = defaultCellColor;
                         }
                     }
                 }
                 foreach (var ship in ships)
                 {
-                    if (ship.CountCells() == 1)
+                    if (!ship.brokenShip)
                     {
-                        OCS++;
+                        if (ship.CountCells() == 1)
+                        {
+                            OCS++;
+                        }
+                        else if (ship.CountCells() == 2)
+                        {
+                            TCS++;
+                        }
+                        else if (ship.CountCells() == 3)
+                        {
+                            THCS++;
+                        }
+                        else if (ship.CountCells() == 4)
+                        {
+                            FCS++;
+                        }
+                        ChooseShip(ref buttons, ship, OCS, TCS, THCS);
                     }
-                    else if (ship.CountCells() == 2)
-                    {
-                        TCS++;
-                    }
-                    else if (ship.CountCells() == 3)
-                    {
-                        THCS++;
-                    }
-                    else if (ship.CountCells() == 4)
-                    {
-                        FCS++;
-                    }
-                    userField.ChooseShip(ref buttons, ship, OCS, TCS, THCS);
                 }
-                //MessageBox.Show("Four: " + FCS + " Three: " + THCS + " Two: " + TCS + " One: " + OCS);
                 fourcellship = FCS;
                 threeCellships = THCS;
                 twoCellShips = TCS;
                 oneCellShips = OCS;
+                if (deleteMode)
+                {
+                    foreach (var s in ships)
+                    {
+                        if (s.brokenShip)
+                        {
+                            foreach (var l in s.locations)
+                            {
+                                buttons[l.row][l.cell].Background = brokenCellColor;
+                            }
+                        }
+                    }
+                }
             }
             public int[][] LocationsActivity()//Method, in which we change state of cell of ship (If cell of ship is alive or no)
             {
@@ -635,6 +661,8 @@ namespace SeaBattle
         {
             public List<Location> locations = new List<Location>();//Add info about shipcell
             string logPath = "log.txt";
+            public bool brokenShip = false;
+            public bool cellChecked = false;
             public Ship()
             {
 
@@ -724,7 +752,7 @@ namespace SeaBattle
             {
                 for (int j = 0; j < userButtons[i].Length; j++)
                 {
-                    userButtons[i][j].Background = Brushes.LightGray;
+                    userButtons[i][j].Background = defaultCellColor;
                     userButtons[i][j].Content = "0";
                 }
             }
@@ -737,7 +765,6 @@ namespace SeaBattle
         public void StopDelete(object sender, RoutedEventArgs e)
         {
             deleteMode = false;
-            userField.checkAllShip(userButtons);
             stopDM.Visibility = Visibility.Hidden;
         }
         /// <summary>
@@ -795,7 +822,7 @@ namespace SeaBattle
                     {
                         userButtons[i - 1][j - 1].Width = cellsize;
                         userButtons[i - 1][j - 1].Height = cellsize;
-                        userButtons[i - 1][j - 1].Background = Brushes.LightGray;
+                        userButtons[i - 1][j - 1].Background = defaultCellColor;
                         userButtons[i - 1][j - 1].Click += AddUserShip;
                         Map.Children.Add(userButtons[i - 1][j - 1]);
                     }
@@ -825,7 +852,7 @@ namespace SeaBattle
                     {
                         enemyButtons[i - 1][j - 1].Width = cellsize;
                         enemyButtons[i - 1][j - 1].Height = cellsize;
-                        enemyButtons[i - 1][j - 1].Background = Brushes.LightGray;
+                        enemyButtons[i - 1][j - 1].Background = defaultCellColor;
                         EnemyMap.Children.Add(enemyButtons[i - 1][j - 1]);
                     }
                 }
@@ -855,7 +882,7 @@ namespace SeaBattle
                         availableShipButton[i - 1][j - 1] = button;
                         availableShipButton[i - 1][j - 1].Width = cellsize;
                         availableShipButton[i - 1][j - 1].Height = cellsize;
-                        availableShipButton[i - 1][j - 1].Background = Brushes.LightGray;
+                        availableShipButton[i - 1][j - 1].Background = defaultCellColor;
                         Shipmap.Children.Add(availableShipButton[i - 1][j - 1]);
                     }
                 }
@@ -915,64 +942,179 @@ namespace SeaBattle
             foreach (var loc in ship.locations)
             {
                 availableShipButton[loc.row][loc.cell].Content = "0";
-                availableShipButton[loc.row][loc.cell].Background = Brushes.LightGray;
+                availableShipButton[loc.row][loc.cell].Background = defaultCellColor;
             }
             availableShipField.ships.Remove(ship);
         }
 
-        public void RegulateAvS()
+        public void countActiveCell(GameField field, Button[][] button)
         {
-            userField.checkAllShip(userButtons);
-            //availableShipField.fourcellship = userField.fourcellship;
-            //availableShipField.threeCellships = userField.threeCellships;
-            //availableShipField.twoCellShips = userField.twoCellShips;
-            //availableShipField.oneCellShips = userField.oneCellShips;
-            if (deleteMode)
+            int fourCellAvail = 0;
+            int threeCellAvail = 0;
+            int twoCellAvail = 0;
+            int oneCellAvail = 0;
+            int brokenOneCellShips = 0;
+            int brokenTwoCellShips = 0;
+            List<Ship> checkList = new List<Ship>();
+            Ship tempShip = new Ship();
+            int[][] fs = field.LocationsActivity();
+            for (int i = 0; i < fs.Length; i++)
             {
-
+                for (int j = 0; j < fs[i].Length; j++)
+                {
+                    if (!checkList.Contains(field.SearchShipG(i, j)))
+                    {
+                        if (button[i][j].Background == fourCellColor)
+                        {
+                            fourCellAvail += field.SearchShipG(i, j).CountCells();
+                            checkList.Add(field.SearchShipG(i, j));
+                        }
+                        else if (button[i][j].Background == threeCellColor)
+                        {
+                            threeCellAvail += field.SearchShipG(i, j).CountCells();
+                            checkList.Add(field.SearchShipG(i, j));
+                        }
+                        else if (button[i][j].Background == twoCellColor)
+                        {
+                            twoCellAvail += field.SearchShipG(i, j).CountCells();
+                            checkList.Add(field.SearchShipG(i, j));
+                        }
+                        else if (button[i][j].Background == oneCellColor)
+                        {
+                            oneCellAvail += field.SearchShipG(i, j).CountCells();
+                            checkList.Add(field.SearchShipG(i, j));
+                        }
+                        //    else if (button[i][j].Background == brokenCellColor)
+                        //    {
+                        //        field.SearchShipG(i, j).brokenShip = true;
+                        //        brokeCells = field.SearchShipG(i, j).CountCells();
+                        //        if (brokeCells == 2)
+                        //        {
+                        //            brokenTwoCellShips++;
+                        //        }
+                        //        else if (brokeCells == 1)
+                        //        {
+                        //            brokenOneCellShips++;
+                        //        }
+                        //        checkList.Add(field.SearchShipG(i, j));
+                        //    }
+                        //}
+                    }
+                }
             }
-            foreach (var ship in availableShipField.ships)
+            regulateAVS(fourCellAvail, threeCellAvail, twoCellAvail, oneCellAvail, brokenOneCellShips, brokenTwoCellShips);
+        }
+        public void regulateAVS(int FCA, int THCA, int TCA, int OCA, int BOCS, int BTCS)
+        {
+            foreach (var s in availableShipField.ships)
             {
-                if (ship.CountCells() == 4)
+                if (s.CountCells() == 4)
                 {
-                    if (userField.fourcellship == 1)
+                    foreach (var loc in s.locations)
                     {
-                        RemoveAvS(ship);
-                        break;
+                        if (FCA > 0)
+                        {
+                            availableShipButton[loc.row][loc.cell].Background = usedCellColor;
+                            availableShipButton[loc.row][loc.cell].Content = "0";
+                            FCA--;
+                        }
+                        else
+                        {
+                            availableShipButton[loc.row][loc.cell].Background = fourCellColor;
+                            availableShipButton[loc.row][loc.cell].Content = "1";
+                        }
                     }
                 }
-                else if (ship.CountCells() == 3)
+                else if (s.CountCells() == 3)
                 {
-                    if (userField.threeCellships > 0 && userField.threeCellships <= 2)
+                    foreach (var loc in s.locations)
                     {
-                        RemoveAvS(ship);
-                        break;
+                        if (THCA > 0)
+                        {
+                            availableShipButton[loc.row][loc.cell].Background = usedCellColor;
+                            availableShipButton[loc.row][loc.cell].Content = "0";
+                            THCA--;
+                        }
+                        else
+                        {
+                            availableShipButton[loc.row][loc.cell].Background = threeCellColor;
+                            availableShipButton[loc.row][loc.cell].Content = "1";
+                        }
                     }
                 }
-                else if (ship.CountCells() == 2)
+                else if (s.CountCells() == 2)
                 {
-                    if (userField.twoCellShips > 0 && userField.twoCellShips <= 3)
+                    foreach (var loc in s.locations)
                     {
-                        RemoveAvS(ship);
-                        break;
+                        if (TCA > 0)
+                        {
+                            availableShipButton[loc.row][loc.cell].Background = usedCellColor;
+                            availableShipButton[loc.row][loc.cell].Content = "0";
+                            TCA--;
+                        }
+                        else
+                        {
+                            availableShipButton[loc.row][loc.cell].Background = twoCellColor;
+                            availableShipButton[loc.row][loc.cell].Content = "1";
+                        }
                     }
                 }
-                else if (ship.CountCells() == 1)
+                else if (s.CountCells() == 1)
                 {
-                    if (userField.oneCellShips > 0 && userField.oneCellShips <= 4)
+                    foreach (var loc in s.locations)
                     {
-                        RemoveAvS(ship);
-                        break;
+                        if (OCA > 0)
+                        {
+                            availableShipButton[loc.row][loc.cell].Background = usedCellColor;
+                            availableShipButton[loc.row][loc.cell].Content = "0";
+                            OCA--;
+                        }
+                        else
+                        {
+                            availableShipButton[loc.row][loc.cell].Background = oneCellColor;
+                            availableShipButton[loc.row][loc.cell].Content = "1";
+                        }
                     }
                 }
             }
-            availableShipField.checkAllShip(availableShipButton);
         }
         private void Start(object sender, RoutedEventArgs e)
         {
-            sessionnumber++;
-            EnemyMap.Visibility = Visibility.Visible;
-            Shipmap.Visibility = Visibility.Hidden;
+            if (CheckCorrectStart())
+            {
+                sessionnumber++;
+                EnemyMap.Visibility = Visibility.Visible;
+                Shipmap.Visibility = Visibility.Hidden;
+            }
+        }
+        public bool CheckCorrectStart()
+        {
+            string message = "";
+            foreach (var s in userField.ships)
+            {
+                if (s.brokenShip)
+                {
+                    message += "The ship with addresses: " + "\n";
+                    foreach (var loc in s.locations)
+                    {
+                        message += "Row: " + loc.row + " Cell: " + loc.cell + "\n";
+                    }
+                }
+            }
+            if (message != "")
+            {
+                MessageBox.Show("You can't start game because of:" +
+                " You have placed or removed the cells of the ships incorectlly" +
+                "\nThe List of the ships: " + "\n" + message + "\nRemove these ships please!");
+                return false;
+            }
+            if (userField.DoExistAllShips())
+            {
+                MessageBox.Show("You can't start game because of:" +
+                        " You haven't placed all ships. Please check available ships on the right field.");
+                return false;
+            }
+            return true;
         }
         public Location GetButtonIndex(Button button)
         {
@@ -988,14 +1130,16 @@ namespace SeaBattle
             }
             return new Location();
         }
+
         /// <summary>
         /// Method check activated cells in all directions in a distance of one cell
         /// </summary>
         /// <param name="l"></param>
         /// <param name="fs"></param>
         /// <returns></returns>
-        public static bool CheckNearbyShip(Location l, int[][] fs, bool mode = false)
+        public static bool CheckNearbyShip(Location l, GameField field, bool mode = false)
         {
+            int[][] fs = field.LocationsActivity();
             for (int i = l.row; i < fs.Length; i++)
             {
                 if (l.row == 9)
@@ -1160,9 +1304,11 @@ namespace SeaBattle
         /// <param name="fs"></param>
         /// <param name="typeOfShip"></param>
         /// <returns></returns>
-        public static bool CheckPartition(Location l, int[][] fs)
+        public static bool CheckPartition(Location l, GameField field)
         {
+            int[][] fs = field.LocationsActivity();
             Ship temps = new Ship();
+            bool addPart = false;
             for (int i = l.row; i < fs.Length; i++)
             {
                 if (l.row == 9)
@@ -1171,39 +1317,51 @@ namespace SeaBattle
                 }
                 if (fs[i][l.cell] == 1)
                 {
-                    //MessageBox.Show("Hello suka, you catch gay panic V.1");
-                    userField.AddRowShip(i, l.cell, l.row);//Add cell to the existing vertical ship
                     for (int k = l.row; k >= 0; k--)
                     {
                         if (fs[k][l.cell] == 1)
                         {
                             foreach (var s in userField.ships)
                             {
+                                MessageBox.Show(addPart.ToString());
                                 if (s.SearchShip(k, l.cell))
                                 {
-                                    temps = s;
-                                    foreach (var loc in s.locations)
+                                    if (field.SearchShipG(k, l.cell).CountCells() < 2 && field.SearchShipG(i, l.cell).CountCells() < 3 && field.fourcellship < 1 || field.SearchShipG(k, l.cell).CountCells() < 2 &&
+                                        field.SearchShipG(i, l.cell).CountCells() < 2 && field.threeCellships < 2)
                                     {
-                                        WriteToLog("Size: " + s.locations.Count + " K: " + k + " Loc.row: " + loc.row + " Loc.cell: " + loc.cell, new StackTrace());
-                                        userField.AddRowShip(l.row, l.cell, loc.row);
+                                        addPart = true;
+                                        temps = s;
+                                        foreach (var loc in s.locations)
+                                        {
+                                            WriteToLog("Size: " + s.locations.Count + " K: " + k + " Loc.row: " + loc.row + " Loc.cell: " + loc.cell, new StackTrace());
+                                            field.AddRowShip(i, l.cell, loc.row);
+                                            field.ships.Remove(temps);
+                                        }
+                                        break;
                                     }
-                                    break;
                                 }
                             }
-                            userField.ships.Remove(temps);
+                        }
+                        else if (k != l.row && fs[k][l.cell] != 1 || k == 0)
+                        {
+                            addPart = true;
+                        }
+                        if (addPart)
+                        {
+                            field.AddRowShip(i, l.cell, l.row);//Add cell to the existing vertical ship
+                            return true;
                         }
                         if (l.row - k == 1)
                         {
                             break;
                         }
                     }
-                    return true;
                 }
                 if (i - l.row == 1)
                 {
-                    //MessageBox.Show("Hello suka, you catch gay panic #1");
                     break;
                 }
+                //MessageBox.Show("Hello suka, you catch gay panic #1");
             }
             for (int i = l.row; i >= 0; i--)
             {
@@ -1213,8 +1371,6 @@ namespace SeaBattle
                 }
                 if (fs[i][l.cell] == 1)
                 {
-                    //MessageBox.Show("Hello suka, you catch gay panic V.2");
-                    userField.AddRowShip(i, l.cell, l.row);//Add cell to the existing vertical ship
                     for (int k = l.row; k < fs.Length; k++)
                     {
                         if (fs[k][l.cell] == 1)
@@ -1223,28 +1379,42 @@ namespace SeaBattle
                             {
                                 if (s.SearchShip(k, l.cell))
                                 {
-                                    temps = s;
-                                    foreach (var loc in s.locations)
+                                    if (field.SearchShipG(k, l.cell).CountCells() < 2 && field.SearchShipG(i, l.cell).CountCells() < 3 && field.fourcellship < 1 || field.SearchShipG(k, l.cell).CountCells() < 2 &&
+                                        field.SearchShipG(i, l.cell).CountCells() < 2 && field.threeCellships < 2)
                                     {
-                                        WriteToLog("K: " + k + " Loc.row: " + loc.row + " Loc.cell: " + loc.cell, new StackTrace());
-                                        userField.AddRowShip(l.row, l.cell, loc.row);
+                                        addPart = true;
+                                        temps = s;
+                                        foreach (var loc in s.locations)
+                                        {
+                                            WriteToLog("Size: " + s.locations.Count + " K: " + k + " Loc.row: " + loc.row + " Loc.cell: " + loc.cell, new StackTrace());
+                                            field.AddRowShip(i, l.cell, loc.row);
+                                            field.ships.Remove(temps);
+                                        }
+                                        break;
                                     }
-                                    break;
                                 }
                             }
-                            userField.ships.Remove(temps);
+                        }
+                        else if (k != l.row && fs[k][l.cell] != 1 || k == 9)
+                        {
+                            addPart = true;
+                        }
+                        if (addPart)
+                        {
+                            userField.AddRowShip(i, l.cell, l.row);//Add cell to the existing vertical ship
+                            return true;
                         }
                         if (k - l.row == 1)
                         {
                             break;
                         }
                     }
-                    return true;
+                    //MessageBox.Show("Hello suka, you catch gay panic V.2");
                 }
                 if (l.row - i == 1)
                 {
-                    //MessageBox.Show("Hello suka, you catch gay panic #2");
                     break;
+                    //MessageBox.Show("Hello suka, you catch gay panic #2");
                 }
             }
             for (int j = l.cell; j < fs[l.row].Length; j++)
@@ -1255,8 +1425,6 @@ namespace SeaBattle
                 }
                 if (fs[l.row][j] == 1)
                 {
-                    //MessageBox.Show("Hello suka, you catch gay panic V.3");
-                    userField.AddCellShip(l.row, j, l.cell);//Add cell to the existing horizontal ship
                     for (int k = l.cell; k >= 0; k--)
                     {
                         if (fs[l.row][k] == 1)
@@ -1265,16 +1433,30 @@ namespace SeaBattle
                             {
                                 if (s.SearchShip(l.row, k))
                                 {
-                                    temps = s;
-                                    foreach (var loc in s.locations)
+                                    if (field.SearchShipG(l.row, k).CountCells() < 2 && field.SearchShipG(l.row, j).CountCells() < 3 && field.fourcellship < 1 ||
+                                        field.SearchShipG(l.row, k).CountCells() < 2 && field.SearchShipG(l.row, j).CountCells() < 2 && field.threeCellships < 2)
                                     {
-                                        WriteToLog("Size: " + s.locations.Count + " K: " + k + " Loc.row: " + loc.row + " Loc.cell: " + loc.cell, new StackTrace());
-                                        userField.AddCellShip(l.row, l.cell, loc.cell);
+                                        addPart = true;
+                                        temps = s;
+                                        foreach (var loc in s.locations)
+                                        {
+                                            WriteToLog("Size: " + s.locations.Count + " K: " + k + " Loc.row: " + loc.row + " Loc.cell: " + loc.cell, new StackTrace());
+                                            field.AddCellShip(l.row, j, loc.cell);
+                                            field.ships.Remove(temps);
+                                        }
+                                        break;
                                     }
-                                    break;
                                 }
                             }
-                            userField.ships.Remove(temps);
+                        }
+                        else if (l.cell != k && fs[l.row][k] != 1 || k == 9)
+                        {
+                            addPart = true;
+                        }
+                        if (addPart)
+                        {
+                            userField.AddCellShip(l.row, j, l.cell);//Add cell to the existing horizontal ship
+                            return true;
                         }
                         if (l.cell - k == 1)
                         {
@@ -1298,7 +1480,6 @@ namespace SeaBattle
                 if (fs[l.row][j] == 1)
                 {
                     //MessageBox.Show("Hello suka, you catch gay panic V.4");
-                    userField.AddCellShip(l.row, j, l.cell);//Add cell to the existing horizontal ship
                     for (int k = l.cell; k < fs.Length; k++)
                     {
                         if (fs[l.row][k] == 1)
@@ -1307,23 +1488,36 @@ namespace SeaBattle
                             {
                                 if (s.SearchShip(l.row, k))
                                 {
-                                    temps = s;
-                                    foreach (var loc in s.locations)
+                                    if (field.SearchShipG(l.row, k).CountCells() < 2 && field.SearchShipG(l.row, j).CountCells() < 3 && field.fourcellship < 1 ||
+                                        field.SearchShipG(l.row, k).CountCells() < 2 && field.SearchShipG(l.row, j).CountCells() < 2 && field.threeCellships < 2)
                                     {
-                                        WriteToLog("Size: " + s.locations.Count + " K: " + k + " Loc.row: " + loc.row + " Loc.cell: " + loc.cell, new StackTrace());
-                                        userField.AddCellShip(l.row, l.cell, loc.cell);
+                                        addPart = true;
+                                        temps = s;
+                                        foreach (var loc in s.locations)
+                                        {
+                                            WriteToLog("Size: " + s.locations.Count + " K: " + k + " Loc.row: " + loc.row + " Loc.cell: " + loc.cell, new StackTrace());
+                                            field.AddCellShip(l.row, j, loc.cell);
+                                            field.ships.Remove(temps);
+                                        }
+                                        break;
                                     }
-                                    break;
                                 }
                             }
-                            userField.ships.Remove(temps);
+                        }
+                        else if (l.cell != k && fs[l.row][k] != 1 || k == 9)
+                        {
+                            addPart = true;
+                        }
+                        if (addPart)
+                        {
+                            userField.AddCellShip(l.row, j, l.cell);//Add cell to the existing horizontal ship
+                            return true;
                         }
                         if (k - l.cell == 1)
                         {
                             break;
                         }
                     }
-                    return true;
                 }
                 if (l.cell - j == 1)
                 {
@@ -1372,26 +1566,26 @@ namespace SeaBattle
                         {
                             breakOperand = true;
                             //MessageBox.Show(userField.GetTwoCellShip().ToString());
-                            if (pressedButton.Background != Brushes.LightGray)
+                            if (pressedButton.Background != defaultCellColor)
                             {
                                 if (deleteMode)
                                 {
                                     userField.ResetLocation(i, j, userButtons);//If button has been activated, the method will reset location, and delete adress from ship's list
                                 }
                                 else
-                                    MessageBox.Show("Activate deleting mode using the button: Delete ship ");
+                                    MessageBox.Show("Activate deleting mode using the button: Delete ship.");
                                 break;
                             }
-                            else if (pressedButton.Background == Brushes.LightGray && deleteMode)
+                            else if (pressedButton.Background == defaultCellColor && deleteMode)
                             {
                                 MessageBox.Show("Choose only activated cell to remove the ships please.");
                                 break;
                             }
-                            else if (userField.ships.Count >= 0 && userField.ships.Count <= 10)
+                            else if (userField.DoExistAllShips())
                             {
                                 Location l = new Location();
                                 l.SetLocation(i, j);
-                                if (CheckNearbyShip(l, userField.LocationsActivity()) && CheckDiagonalCell(l, userField.LocationsActivity()) && userField.ships.Count < 10)//Check cells nearby
+                                if (CheckNearbyShip(l, userField) && CheckDiagonalCell(l, userField.LocationsActivity()) && userField.DoExistAllShips())//Check cells nearby
                                 {
                                     Ship s = new Ship();
                                     Location l1 = new Location();
@@ -1401,19 +1595,29 @@ namespace SeaBattle
                                     userButtons[i][j].Content = "1";
                                     break;
                                 }
-                                else if (CheckDiagonalCell(l, userField.LocationsActivity()) && CheckPartition(l, userField.LocationsActivity()))//Check cells to add them to the current ship
+                                else if (CheckDiagonalCell(l, userField.LocationsActivity()))//Check cells to add them to the current ship
+                                {
+                                    bool succesufulAdding = CheckPartition(l, userField);
+                                    if (succesufulAdding)
+                                    {
+                                        break;
+                                    }
+                                    else if (!succesufulAdding)
+                                    {
+                                        MessageBox.Show("You can't connect the two ships into the one.");
+                                    }
                                     break;
-                                else MessageBox.Show("You can't place ship there");
+                                }
+                                else MessageBox.Show("You can't place ship there.");
                             }
-                            else MessageBox.Show("You have used all ships, Let's start"); //If all ships have been picked
+                            else MessageBox.Show("You have used all ships, Let's start."); //If all ships have been picked
                         }
                     }
                     if (breakOperand)
                     {
                         userField.checkAllShip(userButtons);
                         userField.SortShipsCoordinate();
-                        //availableShipField.checkAllShip(availableShipButton);
-                        //RegulateAvS();
+                        countActiveCell(userField, userButtons);
                         break;
                     }
                 }
