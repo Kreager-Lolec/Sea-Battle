@@ -1,14 +1,14 @@
 ﻿SeaBattle
 
 
-winexe
+exe
 C#
 .cs
-D:\C#projects\SeaBattle\SeaBattle\obj\Debug\
+D:\C#projects\SeaBattle\SeaBattle\obj\Release\
 SeaBattle
 none
 false
-DEBUG;TRACE
+TRACE
 D:\C#projects\SeaBattle\SeaBattle\App.xaml
 11151548125
 

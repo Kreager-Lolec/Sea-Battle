@@ -12,3 +12,4 @@ D:\C#projects\SeaBattle\SeaBattle\obj\Debug\SeaBattle.csproj.GenerateResource.ca
 D:\C#projects\SeaBattle\SeaBattle\obj\Debug\SeaBattle.csproj.CoreCompileInputs.cache
 D:\C#projects\SeaBattle\SeaBattle\obj\Debug\SeaBattle.exe
 D:\C#projects\SeaBattle\SeaBattle\obj\Debug\SeaBattle.pdb
+D:\C#projects\SeaBattle\SeaBattle\obj\Debug\SeaBattle.csproj.AssemblyReference.cache

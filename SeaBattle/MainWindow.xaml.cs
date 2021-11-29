@@ -17,12 +17,10 @@ namespace SeaBattle
     {
         static GameField userField = new GameField();
         static GameField enemyField = new GameField();
-        static GameField availableShipField = new GameField();
+        static AvailableShipField availableShipField = new AvailableShipField();
         static int sessionnumber = 0;
+        static bool startGame = false;
         static bool deleteMode = false;
-        static Button[][] userButtons;
-        static Button[][] enemyButtons;
-        static Button[][] availableShipButton;
         static Button stopDM = new Button();
         const int mapsize = 11;
         int cellsize = 30;
@@ -58,14 +56,14 @@ namespace SeaBattle
             InitializeComponent();
             try
             {
-                userButtons = CreateUIField();
-                enemyButtons = CreateUIField();
-                availableShipButton = CreateUIField();
+                userField.buttons = CreateUIField();
+                enemyField.buttons = CreateUIField();
+                availableShipField.buttons = CreateUIField();
                 Init();
                 File.Create(logPath).Close();
-                userField.DisplayField(userField.LocationsActivity(), ref userButtons);
-                enemyField.DisplayField(enemyField.LocationsActivity(), ref enemyButtons);
-                availableShipField.DisplayField(availableShipField.LocationsActivity(), ref availableShipButton);
+                userField.DisplayField(userField.LocationsActivity(), userField.buttons);
+                enemyField.DisplayField(enemyField.LocationsActivity(), enemyField.buttons);
+                availableShipField.DisplayField(availableShipField.LocationsActivity(), availableShipField.buttons);
             }
             catch (Exception ex)
             {
@@ -121,6 +119,14 @@ namespace SeaBattle
         public class GameField//Class, which save information about state of field
         {
             const string logPath = "log.txt";
+            public Button[][] buttons;
+            public List<Ship> ships = new List<Ship>();
+            public int shipsCount = 0;
+            public int fourcellship = 0;
+            public int threeCellships = 0;
+            public int twoCellShips = 0;
+            public int oneCellShips = 0;
+            public GameField() { }//Default constructor
             void WriteToLog(string message, StackTrace st = null, Exception ex = null, string tip = "")
             {
                 try { if (!File.Exists(logPath)) File.Create(logPath).Close(); } catch { WriteToLog("Can't reach log file.", new StackTrace()); }
@@ -131,13 +137,10 @@ namespace SeaBattle
                 if (tip.Length > 0) File.AppendAllText(logPath, "[Tip: " + tip.TrimEnd('.') + "]");
                 File.AppendAllText(logPath, Environment.NewLine);
             }
-            public List<Ship> ships = new List<Ship>();
-            public int shipsCount = 0;
-            public int fourcellship = 0;
-            public int threeCellships = 0;
-            public int twoCellShips = 0;
-            public int oneCellShips = 0;
-
+            public List<Ship> GetShips()
+            {
+                return ships;
+            }
             public void SortShipsCoordinate()
             {
                 foreach (var s in ships)
@@ -147,9 +150,9 @@ namespace SeaBattle
             }
             public Ship SearchShipG(int row, int cell)
             {
-                foreach (var ship in userField.ships)
+                foreach (var ship in ships)
                 {
-                    if (ship.SearchShip(row, cell))
+                    if (ship.DoesShipExist(row, cell))
                     {
                         return ship;
                     }
@@ -158,9 +161,9 @@ namespace SeaBattle
             }
             public bool DoesExistShip(int row, int cell)
             {
-                foreach (var ship in userField.ships)
+                foreach (var ship in ships)
                 {
-                    if (ship.SearchShip(row, cell))
+                    if (ship.DoesShipExist(row, cell))
                     {
                         return true;
                     }
@@ -168,9 +171,17 @@ namespace SeaBattle
                 return false;
             }
 
-            public bool DoExistAllShips()
+            public bool DoesExistAllships()
             {
-                if (fourcellship == 1 && threeCellships == 2 && twoCellShips == 3 && oneCellShips == 4)
+                if (ships.Count > 10)
+                {
+                    return true;
+                }
+                return false;
+            }
+            public bool DoesNotExistAllTypesOfShips()
+            {
+                if (fourcellship >= 1 && threeCellships >= 2 && twoCellShips >= 3 && oneCellShips >= 4)
                 {
                     return false;
                 }
@@ -192,7 +203,7 @@ namespace SeaBattle
             //    ReturnAvs(SearchShipG(row, cell).CountCells());
             //    ships.Remove(SearchShipG(row, cell));
             //}
-            public void ResetLocation(int row, int cell, Button[][] buttons)
+            public void ResetLocation(int row, int cell)
             {
                 bool breakOperand = false;
                 bool createNewShip = false;
@@ -327,7 +338,7 @@ namespace SeaBattle
             /// <param name="j"></param>
             /// <param name="typeOfShip"></param>
             /// <param name="userButtons"></param>
-            public void ChooseShip(ref Button[][] userButtons, Ship ship, int OCS = 0, int TCS = 0, int THCS = 0)
+            public void ChooseShip(Ship ship, int OCS = 0, int TCS = 0, int THCS = 0)
             {
                 if (!ship.brokenShip)
                 {
@@ -335,7 +346,7 @@ namespace SeaBattle
                     {
                         foreach (var l in ship.locations)
                         {
-                            userButtons[l.row][l.cell].Background = fourCellColor;
+                            buttons[l.row][l.cell].Background = fourCellColor;
                         }
                     }
                     else if (ship.CountCells() == 3)
@@ -344,14 +355,14 @@ namespace SeaBattle
                         {
                             foreach (var l in ship.locations)
                             {
-                                userButtons[l.row][l.cell].Background = threeCellColor;
+                                buttons[l.row][l.cell].Background = threeCellColor;
                             }
                         }
                         else if (THCS > 2)
                         {
                             foreach (var l in ship.locations)
                             {
-                                userButtons[l.row][l.cell].Background = fourCellColor;
+                                buttons[l.row][l.cell].Background = fourCellColor;
                             }
                         }
                     }
@@ -361,21 +372,21 @@ namespace SeaBattle
                         {
                             foreach (var l in ship.locations)
                             {
-                                userButtons[l.row][l.cell].Background = threeCellColor;
+                                buttons[l.row][l.cell].Background = threeCellColor;
                             }
                         }
                         else if (TCS <= 3)
                         {
                             foreach (var l in ship.locations)
                             {
-                                userButtons[l.row][l.cell].Background = twoCellColor;
+                                buttons[l.row][l.cell].Background = twoCellColor;
                             }
                         }
                         else if (THCS >= 2)
                         {
                             foreach (var l in ship.locations)
                             {
-                                userButtons[l.row][l.cell].Background = fourCellColor;
+                                buttons[l.row][l.cell].Background = fourCellColor;
                             }
                         }
                     }
@@ -385,34 +396,33 @@ namespace SeaBattle
                         {
                             foreach (var l in ship.locations)
                             {
-                                userButtons[l.row][l.cell].Background = oneCellColor;
+                                buttons[l.row][l.cell].Background = oneCellColor;
                             }
                         }
                         else if (OCS > 4 && TCS < 3)
                         {
                             foreach (var l in ship.locations)
                             {
-                                userButtons[l.row][l.cell].Background = twoCellColor;
+                                buttons[l.row][l.cell].Background = twoCellColor;
                             }
                         }
                         else if (TCS >= 3 && THCS < 2)
                         {
                             foreach (var l in ship.locations)
                             {
-                                userButtons[l.row][l.cell].Background = threeCellColor;
+                                buttons[l.row][l.cell].Background = threeCellColor;
                             }
                         }
                         else if (THCS >= 2)
                         {
                             foreach (var l in ship.locations)
                             {
-                                userButtons[l.row][l.cell].Background = fourCellColor;
+                                buttons[l.row][l.cell].Background = fourCellColor;
                             }
                         }
                     }
                 }
             }
-            public GameField() { }//Default constructor
             /// <summary>
             /// Method construct horizontal ships. According to the count of cells, program add one type of ship and delete another one
             /// </summary>
@@ -420,6 +430,337 @@ namespace SeaBattle
             /// <param name="checkCell"></param>
             /// <param name="currentCell"></param>
             /// <param name="typeOfShip"></param>
+            /// /// <summary>
+            /// This method is used for checking what button has pressed, then we check if button has been activated or no. If button is not activated, program will count active ships.
+            /// If all ships are not picked, it will be created object, which consist of adress of button. Then program will check cells nearby. If activated cells are not espied, new ship will be created as a object. If not, program
+            /// will check cells, and add this addres to current ship
+            /// </summary>
+            /// <param name="sender"></param>
+            /// <param name="e"></param>
+            public void AddShip(object sender, RoutedEventArgs e)
+            {
+                try
+                {
+                    Button pressedButton = sender as Button;
+                    bool breakOperand = false;
+                    for (int i = 0; i < buttons.Length; i++)
+                    {
+                        for (int j = 0; j < buttons[i].Length; j++)
+                        {
+                            if (pressedButton == buttons[i][j])
+                            {
+                                breakOperand = true;
+                                //MessageBox.Show(userField.GetTwoCellShip().ToString());
+                                if (pressedButton.Background != defaultCellColor)
+                                {
+                                    if (deleteMode)
+                                    {
+                                        ResetLocation(i, j);//If button has been activated, the method will reset location, and delete adress from ship's list
+                                    }
+                                    else
+                                        MessageBox.Show("Activate deleting mode using the button: Delete ship.");
+                                    break;
+                                }
+                                else if (pressedButton.Background == defaultCellColor && deleteMode)
+                                {
+                                    MessageBox.Show("Choose only activated cell to remove the ships please.");
+                                    break;
+                                }
+                                else if (DoesNotExistAllTypesOfShips())
+                                {
+                                    Location l = new Location();
+                                    l.SetLocation(i, j);
+                                    if (CheckNearbyShip(l, LocationsActivity()) && CheckDiagonalCell(l, LocationsActivity()))//Check cells nearby
+                                    {
+                                        Ship s = new Ship();
+                                        Location l1 = new Location();
+                                        l1.SetLocation(i, j);
+                                        s.locations.Add(l1);
+                                        ships.Add(s);
+                                        if (DoesExistAllships())
+                                        {
+                                            s.brokenShip = true;
+                                        }
+                                        buttons[i][j].Content = "1";
+                                        break;
+                                    }
+                                    else if (CheckDiagonalCell(l, LocationsActivity()))//Check cells to add them to the current ship
+                                    {
+                                        bool succesufulAdding = CheckPartition(l);
+                                        if (succesufulAdding)
+                                        {
+                                            break;
+                                        }
+                                        else if (!succesufulAdding)
+                                        {
+                                            MessageBox.Show("You can't connect the two ships into the one.");
+                                        }
+                                        break;
+                                    }
+                                    else MessageBox.Show("You can't place ship there.");
+                                }
+                                else
+                                {
+                                    if (sessionnumber == 0)
+                                    {
+                                        MessageBox.Show("You have used all ships, Let's start.");
+                                    }
+                                    else if (sessionnumber == 1)
+                                    {
+                                        
+                                    }
+                                }
+                                //If all ships have been picked
+                            }
+                        }
+                        if (breakOperand)
+                        {
+                            checkAllShip();
+                            SortShipsCoordinate();
+                            if (sessionnumber == 0)
+                            {
+                                availableShipField.countActiveCell();
+                            }
+                            break;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                    throw;
+                }
+            }
+            /// <summary>
+            /// This method check activated cells nearby, and add them to the current ship
+            /// </summary>
+            /// <param name="l"></param>
+            /// <param name="fs"></param>
+            /// <param name="typeOfShip"></param>
+            /// <returns></returns>
+            public bool CheckPartition(Location l)
+            {
+                int[][] fs = LocationsActivity();
+                Ship temps = new Ship();
+                bool addPart = false;
+                for (int i = l.row; i < fs.Length; i++)
+                {
+                    if (l.row == 9)
+                    {
+                        break;
+                    }
+                    if (fs[i][l.cell] == 1)
+                    {
+                        for (int k = l.row; k >= 0; k--)
+                        {
+                            if (fs[k][l.cell] == 1)
+                            {
+                                foreach (var s in ships)
+                                {
+                                    if (s.DoesShipExist(k, l.cell))
+                                    {
+                                        
+                                        if (s.GetShipSize(k, l.cell) < 2 && s.GetShipSize(i, l.cell) < 3 && fourcellship < 1 || s.GetShipSize(k, l.cell) < 2 &&
+                                            s.GetShipSize(i, l.cell) < 2 && threeCellships < 2)
+                                        {
+                                            addPart = true;
+                                            temps = s;
+                                            foreach (var loc in s.locations)
+                                            {
+                                                WriteToLog("Size: " + s.locations.Count + " K: " + k + " Loc.row: " + loc.row + " Loc.cell: " + loc.cell, new StackTrace());
+                                                AddRowShip(i, l.cell, loc.row);
+                                                ships.Remove(temps);
+                                            }
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            else if (k != l.row && fs[k][l.cell] != 1 || k == 0)
+                            {
+                                addPart = true;
+                            }
+                            if (addPart)
+                            {
+                                AddRowShip(i, l.cell, l.row);//Add cell to the existing vertical ship
+                                return true;
+                            }
+                            if (l.row - k == 1)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    if (i - l.row == 1)
+                    {
+                        break;
+                    }
+                    //MessageBox.Show("Hello suka, you catch gay panic #1");
+                }
+                for (int i = l.row; i >= 0; i--)
+                {
+                    if (l.row == 0)
+                    {
+                        break;
+                    }
+                    if (fs[i][l.cell] == 1)
+                    {
+                        for (int k = l.row; k < fs.Length; k++)
+                        {
+                            if (fs[k][l.cell] == 1)
+                            {
+                                foreach (var s in ships)
+                                {
+                                    if (s.DoesShipExist(k, l.cell))
+                                    {
+                                        if (s.GetShipSize(k, l.cell) < 2 && s.GetShipSize(i, l.cell) < 3 && fourcellship < 1 || s.GetShipSize(k, l.cell) < 2 &&
+                                            s.GetShipSize(i, l.cell) < 2 && threeCellships < 2)
+                                        {
+                                            addPart = true;
+                                            temps = s;
+                                            foreach (var loc in s.locations)
+                                            {
+                                                WriteToLog("Size: " + s.locations.Count + " K: " + k + " Loc.row: " + loc.row + " Loc.cell: " + loc.cell, new StackTrace());
+                                                AddRowShip(i, l.cell, loc.row);
+                                                ships.Remove(temps);
+                                            }
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            else if (k != l.row && fs[k][l.cell] != 1 || k == 9)
+                            {
+                                addPart = true;
+                            }
+                            if (addPart)
+                            {
+                                AddRowShip(i, l.cell, l.row);//Add cell to the existing vertical ship
+                                return true;
+                            }
+                            if (k - l.row == 1)
+                            {
+                                break;
+                            }
+                        }
+                        //MessageBox.Show("Hello suka, you catch gay panic V.2");
+                    }
+                    if (l.row - i == 1)
+                    {
+                        break;
+                        //MessageBox.Show("Hello suka, you catch gay panic #2");
+                    }
+                }
+                for (int j = l.cell; j < fs[l.row].Length; j++)
+                {
+                    if (l.cell == 9)
+                    {
+                        break;
+                    }
+                    if (fs[l.row][j] == 1)
+                    {
+                        for (int k = l.cell; k >= 0; k--)
+                        {
+                            if (fs[l.row][k] == 1)
+                            {
+                                foreach (var s in userField.ships)
+                                {
+                                    if (s.DoesShipExist(l.row, k))
+                                    {
+                                        if (s.GetShipSize(l.row, k) < 2 && s.GetShipSize(l.row, j) < 3 && fourcellship < 1 ||
+                                            s.GetShipSize(l.row, k) < 2 && s.GetShipSize(l.row, j) < 2 && threeCellships < 2)
+                                        {
+                                            addPart = true;
+                                            temps = s;
+                                            foreach (var loc in s.locations)
+                                            {
+                                                WriteToLog("Size: " + s.locations.Count + " K: " + k + " Loc.row: " + loc.row + " Loc.cell: " + loc.cell, new StackTrace());
+                                                AddCellShip(l.row, j, loc.cell);
+                                                ships.Remove(temps);
+                                            }
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            else if (l.cell != k && fs[l.row][k] != 1 || k == 9)
+                            {
+                                addPart = true;
+                            }
+                            if (addPart)
+                            {
+                                AddCellShip(l.row, j, l.cell);//Add cell to the existing horizontal ship
+                                return true;
+                            }
+                            if (l.cell - k == 1)
+                            {
+                                break;
+                            }
+                        }
+                        return true;
+                    }
+                    if (j - l.cell == 1)
+                    {
+                        //MessageBox.Show("Hello suka, you catch gay panic #3");
+                        break;
+                    }
+                }
+                for (int j = l.cell; j >= 0; j--)
+                {
+                    if (l.cell == 0)
+                    {
+                        break;
+                    }
+                    if (fs[l.row][j] == 1)
+                    {
+                        //MessageBox.Show("Hello suka, you catch gay panic V.4");
+                        for (int k = l.cell; k < fs.Length; k++)
+                        {
+                            if (fs[l.row][k] == 1)
+                            {
+                                foreach (var s in userField.ships)
+                                {
+                                    if (s.DoesShipExist(l.row, k))
+                                    {
+                                        if (s.GetShipSize(l.row, k) < 2 && s.GetShipSize(l.row, j) < 3 && fourcellship < 1 ||
+                                            s.GetShipSize(l.row, k) < 2 && s.GetShipSize(l.row, j) < 2 && threeCellships < 2)
+                                        {
+                                            addPart = true;
+                                            temps = s;
+                                            foreach (var loc in s.locations)
+                                            {
+                                                WriteToLog("Size: " + s.locations.Count + " K: " + k + " Loc.row: " + loc.row + " Loc.cell: " + loc.cell, new StackTrace());
+                                                AddCellShip(l.row, j, loc.cell);
+                                                ships.Remove(temps);
+                                            }
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            else if (l.cell != k && fs[l.row][k] != 1 || k == 9)
+                            {
+                                addPart = true;
+                            }
+                            if (addPart)
+                            {
+                                AddCellShip(l.row, j, l.cell);//Add cell to the existing horizontal ship
+                                return true;
+                            }
+                            if (k - l.cell == 1)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    if (l.cell - j == 1)
+                    {
+                        //MessageBox.Show("Hello suka, you catch gay panic #4");
+                        break;
+                    }
+                }
+                return false;
+            }
             public void AddCellShip(int row, int checkCell, int currentCell)
             {
                 bool breakOperand = false;
@@ -427,14 +768,18 @@ namespace SeaBattle
                 {
                     foreach (var l in s.locations)
                     {
-                        if (l.row == row && l.cell == checkCell)
+                        if (l.row == row && l.cell == checkCell && !s.brokenShip || s.brokenShip && DoesNotExistAllTypesOfShips())
                         {
+                            if (s.brokenShip && DoesNotExistAllTypesOfShips())
+                            {
+                                s.brokenShip = false;
+                            }
                             if (fourcellship < 1)
                             {
-                                if (s.CountCells() == 1 && twoCellShips == 3 && threeCellships == 2 && oneCellShips >= 4)
+                                if (s.CountCells() == 1 && twoCellShips == 3 && threeCellships == 2 && oneCellShips >= 1)
                                 {
                                     s.locations.Add(new Location(row, currentCell));//Add cell to the existing ship
-                                    userButtons[row][currentCell].Content = "1";
+                                    buttons[row][currentCell].Content = "1";
                                     break;
                                 }
                             }
@@ -444,10 +789,10 @@ namespace SeaBattle
                             }
                             else if (fourcellship < 1)
                             {
-                                if (s.CountCells() == 3 || s.CountCells() == 2)
+                                if (s.CountCells() == 3 || s.CountCells() == 2 && threeCellships < 3)
                                 {
                                     s.locations.Add(new Location(row, currentCell));//Add cell to the existing ship
-                                    userButtons[row][currentCell].Content = "1";
+                                    buttons[row][currentCell].Content = "1";
                                 }
                             }
                             if (threeCellships >= 2 && s.CountCells() == 3)
@@ -460,7 +805,7 @@ namespace SeaBattle
                                 if (s.CountCells() == 2 || s.CountCells() == 1)
                                 {
                                     s.locations.Add(new Location(row, currentCell));//Add cell to the existing ship
-                                    userButtons[row][currentCell].Content = "1";
+                                    buttons[row][currentCell].Content = "1";
                                 }
                             }
                             if (twoCellShips >= 3 && s.CountCells() == 2)
@@ -471,7 +816,7 @@ namespace SeaBattle
                             else if (twoCellShips < 3 && s.CountCells() == 1)
                             {
                                 s.locations.Add(new Location(row, currentCell));//Add cell to the existing ship
-                                userButtons[row][currentCell].Content = "1";
+                                buttons[row][currentCell].Content = "1";
                             }
                             breakOperand = true;
                             break;
@@ -497,16 +842,20 @@ namespace SeaBattle
                 {
                     foreach (var l in s.locations)
                     {
-                        if (l.row == checkRow && l.cell == cell)
+                        if (l.row == checkRow && l.cell == cell && !s.brokenShip || s.brokenShip && DoesNotExistAllTypesOfShips())
                         {
+                            if (s.brokenShip && DoesNotExistAllTypesOfShips())
+                            {
+                                s.brokenShip = false;
+                            }
                             //MessageBox.Show(fourcellship.ToString());
                             //userField.checkAllShip(userField.LocationsActivity(), userButtons);
                             if (fourcellship < 1)
                             {
-                                if (s.CountCells() == 1 && twoCellShips == 3 && threeCellships == 2 && oneCellShips >= 4)
+                                if (s.CountCells() == 1 && twoCellShips == 3 && threeCellships == 2 && oneCellShips >= 1)
                                 {
                                     s.locations.Add(new Location(currentRow, cell));//Add cell to the existing ship
-                                    userButtons[currentRow][cell].Content = "1";
+                                    buttons[currentRow][cell].Content = "1";
                                     break;
                                 }
                             }
@@ -516,10 +865,10 @@ namespace SeaBattle
                             }
                             else if (fourcellship < 1)
                             {
-                                if (s.CountCells() == 3 || s.CountCells() == 2)
+                                if (s.CountCells() == 3 || s.CountCells() == 2 && threeCellships < 3)
                                 {
                                     s.locations.Add(new Location(currentRow, cell));//Add cell to the existing ship
-                                    userButtons[currentRow][cell].Content = "1";
+                                    buttons[currentRow][cell].Content = "1";
                                 }
                             }
                             if (threeCellships >= 2 && s.CountCells() == 3)
@@ -532,7 +881,7 @@ namespace SeaBattle
                                 if (s.CountCells() == 2 || s.CountCells() == 1)
                                 {
                                     s.locations.Add(new Location(currentRow, cell));//Add cell to the existing ship
-                                    userButtons[currentRow][cell].Content = "1";
+                                    buttons[currentRow][cell].Content = "1";
                                 }
                             }
                             if (twoCellShips >= 3 && s.CountCells() == 2)
@@ -543,7 +892,7 @@ namespace SeaBattle
                             else if (twoCellShips < 3 && s.CountCells() == 1)
                             {
                                 s.locations.Add(new Location(currentRow, cell));//Add cell to the existing ship
-                                userButtons[currentRow][cell].Content = "1";
+                                buttons[currentRow][cell].Content = "1";
                             }
                             breakOperand = true;
                             break;
@@ -561,7 +910,7 @@ namespace SeaBattle
             /// </summary>
             /// <param name="field"></param>
             /// <param name="userButtons"></param>
-            public void checkAllShip(Button[][] buttons)
+            public void checkAllShip()
             {
                 int OCS = 0;
                 int TCS = 0;
@@ -602,23 +951,20 @@ namespace SeaBattle
                         {
                             FCS++;
                         }
-                        ChooseShip(ref buttons, ship, OCS, TCS, THCS);
+                        ChooseShip(ship, OCS, TCS, THCS);
                     }
                 }
                 fourcellship = FCS;
                 threeCellships = THCS;
                 twoCellShips = TCS;
                 oneCellShips = OCS;
-                if (deleteMode)
+                foreach (var s in ships)
                 {
-                    foreach (var s in ships)
+                    if (s.brokenShip)
                     {
-                        if (s.brokenShip)
+                        foreach (var l in s.locations)
                         {
-                            foreach (var l in s.locations)
-                            {
-                                buttons[l.row][l.cell].Background = brokenCellColor;
-                            }
+                            buttons[l.row][l.cell].Background = brokenCellColor;
                         }
                     }
                 }
@@ -645,7 +991,7 @@ namespace SeaBattle
                 }
                 return fs;
             }
-            public void DisplayField(int[][] fs, ref Button[][] buttons)//According to state of cells of ships, method fills up array with numbers 1 or 2
+            public void DisplayField(int[][] fs, Button[][] buttons)//According to state of cells of ships, method fills up array with numbers 1 or 2
             {
                 for (int i = 0; i < fs.Length; i++)
                 {
@@ -657,16 +1003,191 @@ namespace SeaBattle
             }
         }
 
+        public class AvailableShipField : GameField
+        {
+            public void ShowAvailableShip()
+            {
+                for (int i = 0; i < buttons.Length; i++)
+                {
+                    ships.Add(new Ship());
+                }
+                ships[0].locations.Add(new Location(1, 1));
+                ships[0].locations.Add(new Location(2, 1));
+                ships[0].locations.Add(new Location(3, 1));
+                ships[0].locations.Add(new Location(4, 1));
+                ships[1].locations.Add(new Location(2, 3));
+                ships[1].locations.Add(new Location(3, 3));
+                ships[1].locations.Add(new Location(4, 3));
+                ships[2].locations.Add(new Location(2, 5));
+                ships[2].locations.Add(new Location(3, 5));
+                ships[2].locations.Add(new Location(4, 5));
+                ships[3].locations.Add(new Location(6, 1));
+                ships[3].locations.Add(new Location(7, 1));
+                ships[4].locations.Add(new Location(6, 3));
+                ships[4].locations.Add(new Location(7, 3));
+                ships[5].locations.Add(new Location(6, 5));
+                ships[5].locations.Add(new Location(7, 5));
+                ships[6].locations.Add(new Location(1, 7));
+                ships[7].locations.Add(new Location(3, 7));
+                ships[8].locations.Add(new Location(5, 7));
+                ships[9].locations.Add(new Location(7, 7));
+                buttons[1][1].Content = "1";
+                buttons[2][1].Content = "1";
+                buttons[3][1].Content = "1";
+                buttons[4][1].Content = "1";
+                buttons[2][3].Content = "1";
+                buttons[3][3].Content = "1";
+                buttons[4][3].Content = "1";
+                buttons[2][5].Content = "1";
+                buttons[3][5].Content = "1";
+                buttons[4][5].Content = "1";
+                buttons[6][1].Content = "1";
+                buttons[7][1].Content = "1";
+                buttons[6][3].Content = "1";
+                buttons[7][3].Content = "1";
+                buttons[6][5].Content = "1";
+                buttons[7][5].Content = "1";
+                buttons[1][7].Content = "1";
+                buttons[3][7].Content = "1";
+                buttons[5][7].Content = "1";
+                buttons[7][7].Content = "1";
+                checkAllShip();
+            }
+            public void RemoveAvS(Ship ship)
+            {
+                foreach (var loc in ship.locations)
+                {
+                    buttons[loc.row][loc.cell].Content = "0";
+                    buttons[loc.row][loc.cell].Background = defaultCellColor;
+                }
+                ships.Remove(ship);
+            }
+            public void countActiveCell()
+            {
+                int fourCellAvail = 0;
+                int threeCellAvail = 0;
+                int twoCellAvail = 0;
+                int oneCellAvail = 0;
+                int brokenOneCellShips = 0;
+                int brokenTwoCellShips = 0;
+                List<Ship> checkList = new List<Ship>();
+                Ship tempShip = new Ship();
+                int[][] fs = userField.LocationsActivity();
+                Button[][] tempbuttons = userField.buttons;
+                for (int i = 0; i < fs.Length; i++)
+                {
+                    for (int j = 0; j < fs[i].Length; j++)
+                    {
+                        if (!checkList.Contains(userField.SearchShipG(i, j)))
+                        {
+                            if (tempbuttons[i][j].Background == fourCellColor)
+                            {
+                                fourCellAvail += userField.SearchShipG(i, j).CountCells();
+                                checkList.Add(userField.SearchShipG(i, j));
+                            }
+                            else if (tempbuttons[i][j].Background == threeCellColor)
+                            {
+                                threeCellAvail += userField.SearchShipG(i, j).CountCells();
+                                checkList.Add(userField.SearchShipG(i, j));
+                            }
+                            else if (tempbuttons[i][j].Background == twoCellColor)
+                            {
+                                twoCellAvail += userField.SearchShipG(i, j).CountCells();
+                                checkList.Add(userField.SearchShipG(i, j));
+                            }
+                            else if (tempbuttons[i][j].Background == oneCellColor)
+                            {
+                                oneCellAvail += userField.SearchShipG(i, j).CountCells();
+                                checkList.Add(userField.SearchShipG(i, j));
+                            }
+                        }
+                    }
+                }
+                regulateAVS(fourCellAvail, threeCellAvail, twoCellAvail, oneCellAvail, brokenOneCellShips, brokenTwoCellShips);
+            }
+            public void regulateAVS(int FCA, int THCA, int TCA, int OCA, int BOCS, int BTCS)
+            {
+                foreach (var s in ships)
+                {
+                    if (s.CountCells() == 4)
+                    {
+                        foreach (var loc in s.locations)
+                        {
+                            if (FCA > 0)
+                            {
+                                buttons[loc.row][loc.cell].Background = usedCellColor;
+                                buttons[loc.row][loc.cell].Content = "0";
+                                FCA--;
+                            }
+                            else
+                            {
+                                buttons[loc.row][loc.cell].Background = fourCellColor;
+                                buttons[loc.row][loc.cell].Content = "1";
+                            }
+                        }
+                    }
+                    else if (s.CountCells() == 3)
+                    {
+                        foreach (var loc in s.locations)
+                        {
+                            if (THCA > 0)
+                            {
+                                buttons[loc.row][loc.cell].Background = usedCellColor;
+                                buttons[loc.row][loc.cell].Content = "0";
+                                THCA--;
+                            }
+                            else
+                            {
+                                buttons[loc.row][loc.cell].Background = threeCellColor;
+                                buttons[loc.row][loc.cell].Content = "1";
+                            }
+                        }
+                    }
+                    else if (s.CountCells() == 2)
+                    {
+                        foreach (var loc in s.locations)
+                        {
+                            if (TCA > 0)
+                            {
+                                buttons[loc.row][loc.cell].Background = usedCellColor;
+                                buttons[loc.row][loc.cell].Content = "0";
+                                TCA--;
+                            }
+                            else
+                            {
+                                buttons[loc.row][loc.cell].Background = twoCellColor;
+                                buttons[loc.row][loc.cell].Content = "1";
+                            }
+                        }
+                    }
+                    else if (s.CountCells() == 1)
+                    {
+                        foreach (var loc in s.locations)
+                        {
+                            if (OCA > 0)
+                            {
+                                buttons[loc.row][loc.cell].Background = usedCellColor;
+                                buttons[loc.row][loc.cell].Content = "0";
+                                OCA--;
+                            }
+                            else
+                            {
+                                buttons[loc.row][loc.cell].Background = oneCellColor;
+                                buttons[loc.row][loc.cell].Content = "1";
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         public class Ship//Class, which determine size of ship
         {
             public List<Location> locations = new List<Location>();//Add info about shipcell
             string logPath = "log.txt";
             public bool brokenShip = false;
             public bool cellChecked = false;
-            public Ship()
-            {
-
-            }
+            public Ship() { }
             public Ship(List<Location> locs)
             {
                 locations = locs;
@@ -693,7 +1214,7 @@ namespace SeaBattle
                 }
                 return cellCounter;
             }
-            public bool SearchShip(int row, int cell)
+            public bool DoesShipExist(int row, int cell)
             {
                 foreach (Location l in locations)
                 {
@@ -704,6 +1225,18 @@ namespace SeaBattle
                     }
                 }
                 return false;
+            }
+            public int GetShipSize(int row, int cell)
+            {
+                foreach (Location l in locations)
+                {
+                    if (l.row == row && l.cell == cell)
+                    {
+                        WriteToLog("Searched row: " + l.row + " Searched cell: " + l.cell);
+                        return locations.Count;
+                    }
+                }
+                return 0;
             }
             public void SortLocs()
             {
@@ -738,24 +1271,7 @@ namespace SeaBattle
             stopDM.Click += StopDelete;
             ButtonMap.Children.Add(stopDM);
             CreateMap();
-            ShowAvailableShip();
-        }
-        /// <summary>
-        /// This method delete all ships, and return map to the default view
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        public void ClearField(object sender, RoutedEventArgs e)
-        {
-            userField.ships.Clear();
-            for (int i = 0; i < userButtons.Length; i++)
-            {
-                for (int j = 0; j < userButtons[i].Length; j++)
-                {
-                    userButtons[i][j].Background = defaultCellColor;
-                    userButtons[i][j].Content = "0";
-                }
-            }
+            availableShipField.ShowAvailableShip();
         }
         /// <summary>
         /// This method deactivate deleting mode, and return color of the ships to the normal view
@@ -820,11 +1336,12 @@ namespace SeaBattle
                     }
                     else
                     {
-                        userButtons[i - 1][j - 1].Width = cellsize;
-                        userButtons[i - 1][j - 1].Height = cellsize;
-                        userButtons[i - 1][j - 1].Background = defaultCellColor;
-                        userButtons[i - 1][j - 1].Click += AddUserShip;
-                        Map.Children.Add(userButtons[i - 1][j - 1]);
+                        userField.buttons[i - 1][j - 1].Width = cellsize;
+                        userField.buttons[i - 1][j - 1].Height = cellsize;
+                        userField.buttons[i - 1][j - 1].Background = defaultCellColor;
+                        userField.buttons[i - 1][j - 1].Click += userField.AddShip;
+                        userField.buttons[i - 1][j - 1].Tag = "UserShip";
+                        Map.Children.Add(userField.buttons[i - 1][j - 1]);
                     }
                 }
             }
@@ -850,10 +1367,11 @@ namespace SeaBattle
                     }
                     else
                     {
-                        enemyButtons[i - 1][j - 1].Width = cellsize;
-                        enemyButtons[i - 1][j - 1].Height = cellsize;
-                        enemyButtons[i - 1][j - 1].Background = defaultCellColor;
-                        EnemyMap.Children.Add(enemyButtons[i - 1][j - 1]);
+                        enemyField.buttons[i - 1][j - 1].Width = cellsize;
+                        enemyField.buttons[i - 1][j - 1].Height = cellsize;
+                        enemyField.buttons[i - 1][j - 1].Background = defaultCellColor;
+                        enemyField.buttons[i - 1][j - 1].Click += enemyField.AddShip;
+                        EnemyMap.Children.Add(enemyField.buttons[i - 1][j - 1]);
                     }
                 }
             }
@@ -879,201 +1397,11 @@ namespace SeaBattle
                     }
                     else
                     {
-                        availableShipButton[i - 1][j - 1] = button;
-                        availableShipButton[i - 1][j - 1].Width = cellsize;
-                        availableShipButton[i - 1][j - 1].Height = cellsize;
-                        availableShipButton[i - 1][j - 1].Background = defaultCellColor;
-                        Shipmap.Children.Add(availableShipButton[i - 1][j - 1]);
-                    }
-                }
-            }
-        }
-
-        public void ShowAvailableShip()
-        {
-            for (int i = 0; i < availableShipButton.Length; i++)
-            {
-                availableShipField.ships.Add(new Ship());
-            }
-            availableShipField.ships[0].locations.Add(new Location(1, 1));
-            availableShipField.ships[0].locations.Add(new Location(2, 1));
-            availableShipField.ships[0].locations.Add(new Location(3, 1));
-            availableShipField.ships[0].locations.Add(new Location(4, 1));
-            availableShipField.ships[1].locations.Add(new Location(2, 3));
-            availableShipField.ships[1].locations.Add(new Location(3, 3));
-            availableShipField.ships[1].locations.Add(new Location(4, 3));
-            availableShipField.ships[2].locations.Add(new Location(2, 5));
-            availableShipField.ships[2].locations.Add(new Location(3, 5));
-            availableShipField.ships[2].locations.Add(new Location(4, 5));
-            availableShipField.ships[3].locations.Add(new Location(6, 1));
-            availableShipField.ships[3].locations.Add(new Location(7, 1));
-            availableShipField.ships[4].locations.Add(new Location(6, 3));
-            availableShipField.ships[4].locations.Add(new Location(7, 3));
-            availableShipField.ships[5].locations.Add(new Location(6, 5));
-            availableShipField.ships[5].locations.Add(new Location(7, 5));
-            availableShipField.ships[6].locations.Add(new Location(1, 7));
-            availableShipField.ships[7].locations.Add(new Location(3, 7));
-            availableShipField.ships[8].locations.Add(new Location(5, 7));
-            availableShipField.ships[9].locations.Add(new Location(7, 7));
-            availableShipButton[1][1].Content = "1";
-            availableShipButton[2][1].Content = "1";
-            availableShipButton[3][1].Content = "1";
-            availableShipButton[4][1].Content = "1";
-            availableShipButton[2][3].Content = "1";
-            availableShipButton[3][3].Content = "1";
-            availableShipButton[4][3].Content = "1";
-            availableShipButton[2][5].Content = "1";
-            availableShipButton[3][5].Content = "1";
-            availableShipButton[4][5].Content = "1";
-            availableShipButton[6][1].Content = "1";
-            availableShipButton[7][1].Content = "1";
-            availableShipButton[6][3].Content = "1";
-            availableShipButton[7][3].Content = "1";
-            availableShipButton[6][5].Content = "1";
-            availableShipButton[7][5].Content = "1";
-            availableShipButton[1][7].Content = "1";
-            availableShipButton[3][7].Content = "1";
-            availableShipButton[5][7].Content = "1";
-            availableShipButton[7][7].Content = "1";
-            availableShipField.checkAllShip(availableShipButton);
-        }
-        public void RemoveAvS(Ship ship)
-        {
-            foreach (var loc in ship.locations)
-            {
-                availableShipButton[loc.row][loc.cell].Content = "0";
-                availableShipButton[loc.row][loc.cell].Background = defaultCellColor;
-            }
-            availableShipField.ships.Remove(ship);
-        }
-
-        public void countActiveCell(GameField field, Button[][] button)
-        {
-            int fourCellAvail = 0;
-            int threeCellAvail = 0;
-            int twoCellAvail = 0;
-            int oneCellAvail = 0;
-            int brokenOneCellShips = 0;
-            int brokenTwoCellShips = 0;
-            List<Ship> checkList = new List<Ship>();
-            Ship tempShip = new Ship();
-            int[][] fs = field.LocationsActivity();
-            for (int i = 0; i < fs.Length; i++)
-            {
-                for (int j = 0; j < fs[i].Length; j++)
-                {
-                    if (!checkList.Contains(field.SearchShipG(i, j)))
-                    {
-                        if (button[i][j].Background == fourCellColor)
-                        {
-                            fourCellAvail += field.SearchShipG(i, j).CountCells();
-                            checkList.Add(field.SearchShipG(i, j));
-                        }
-                        else if (button[i][j].Background == threeCellColor)
-                        {
-                            threeCellAvail += field.SearchShipG(i, j).CountCells();
-                            checkList.Add(field.SearchShipG(i, j));
-                        }
-                        else if (button[i][j].Background == twoCellColor)
-                        {
-                            twoCellAvail += field.SearchShipG(i, j).CountCells();
-                            checkList.Add(field.SearchShipG(i, j));
-                        }
-                        else if (button[i][j].Background == oneCellColor)
-                        {
-                            oneCellAvail += field.SearchShipG(i, j).CountCells();
-                            checkList.Add(field.SearchShipG(i, j));
-                        }
-                        //    else if (button[i][j].Background == brokenCellColor)
-                        //    {
-                        //        field.SearchShipG(i, j).brokenShip = true;
-                        //        brokeCells = field.SearchShipG(i, j).CountCells();
-                        //        if (brokeCells == 2)
-                        //        {
-                        //            brokenTwoCellShips++;
-                        //        }
-                        //        else if (brokeCells == 1)
-                        //        {
-                        //            brokenOneCellShips++;
-                        //        }
-                        //        checkList.Add(field.SearchShipG(i, j));
-                        //    }
-                        //}
-                    }
-                }
-            }
-            regulateAVS(fourCellAvail, threeCellAvail, twoCellAvail, oneCellAvail, brokenOneCellShips, brokenTwoCellShips);
-        }
-        public void regulateAVS(int FCA, int THCA, int TCA, int OCA, int BOCS, int BTCS)
-        {
-            foreach (var s in availableShipField.ships)
-            {
-                if (s.CountCells() == 4)
-                {
-                    foreach (var loc in s.locations)
-                    {
-                        if (FCA > 0)
-                        {
-                            availableShipButton[loc.row][loc.cell].Background = usedCellColor;
-                            availableShipButton[loc.row][loc.cell].Content = "0";
-                            FCA--;
-                        }
-                        else
-                        {
-                            availableShipButton[loc.row][loc.cell].Background = fourCellColor;
-                            availableShipButton[loc.row][loc.cell].Content = "1";
-                        }
-                    }
-                }
-                else if (s.CountCells() == 3)
-                {
-                    foreach (var loc in s.locations)
-                    {
-                        if (THCA > 0)
-                        {
-                            availableShipButton[loc.row][loc.cell].Background = usedCellColor;
-                            availableShipButton[loc.row][loc.cell].Content = "0";
-                            THCA--;
-                        }
-                        else
-                        {
-                            availableShipButton[loc.row][loc.cell].Background = threeCellColor;
-                            availableShipButton[loc.row][loc.cell].Content = "1";
-                        }
-                    }
-                }
-                else if (s.CountCells() == 2)
-                {
-                    foreach (var loc in s.locations)
-                    {
-                        if (TCA > 0)
-                        {
-                            availableShipButton[loc.row][loc.cell].Background = usedCellColor;
-                            availableShipButton[loc.row][loc.cell].Content = "0";
-                            TCA--;
-                        }
-                        else
-                        {
-                            availableShipButton[loc.row][loc.cell].Background = twoCellColor;
-                            availableShipButton[loc.row][loc.cell].Content = "1";
-                        }
-                    }
-                }
-                else if (s.CountCells() == 1)
-                {
-                    foreach (var loc in s.locations)
-                    {
-                        if (OCA > 0)
-                        {
-                            availableShipButton[loc.row][loc.cell].Background = usedCellColor;
-                            availableShipButton[loc.row][loc.cell].Content = "0";
-                            OCA--;
-                        }
-                        else
-                        {
-                            availableShipButton[loc.row][loc.cell].Background = oneCellColor;
-                            availableShipButton[loc.row][loc.cell].Content = "1";
-                        }
+                        availableShipField.buttons[i - 1][j - 1] = button;
+                        availableShipField.buttons[i - 1][j - 1].Width = cellsize;
+                        availableShipField.buttons[i - 1][j - 1].Height = cellsize;
+                        availableShipField.buttons[i - 1][j - 1].Background = defaultCellColor;
+                        Shipmap.Children.Add(availableShipField.buttons[i - 1][j - 1]);
                     }
                 }
             }
@@ -1108,7 +1436,7 @@ namespace SeaBattle
                 "\nThe List of the ships: " + "\n" + message + "\nRemove these ships please!");
                 return false;
             }
-            if (userField.DoExistAllShips())
+            if (userField.DoesNotExistAllTypesOfShips())
             {
                 MessageBox.Show("You can't start game because of:" +
                         " You haven't placed all ships. Please check available ships on the right field.");
@@ -1118,11 +1446,11 @@ namespace SeaBattle
         }
         public Location GetButtonIndex(Button button)
         {
-            for (int i = 0; i < userButtons.Length; i++)
+            for (int i = 0; i < userField.buttons.Length; i++)
             {
-                for (int j = 0; j < userButtons[i].Length; j++)
+                for (int j = 0; j < userField.buttons[i].Length; j++)
                 {
-                    if (button == userButtons[i][j])
+                    if (button == userField.buttons[i][j])
                     {
                         return new Location(i, j);
                     }
@@ -1137,9 +1465,8 @@ namespace SeaBattle
         /// <param name="l"></param>
         /// <param name="fs"></param>
         /// <returns></returns>
-        public static bool CheckNearbyShip(Location l, GameField field, bool mode = false)
+        public static bool CheckNearbyShip(Location l, int[][] fs, bool mode = false)
         {
-            int[][] fs = field.LocationsActivity();
             for (int i = l.row; i < fs.Length; i++)
             {
                 if (l.row == 9)
@@ -1217,7 +1544,7 @@ namespace SeaBattle
         /// <param name="l"></param>
         /// <param name="fs"></param>
         /// <returns></returns>
-        public bool CheckDiagonalCell(Location l, int[][] fs)
+        static public bool CheckDiagonalCell(Location l, int[][] fs)
         {
             for (int i = l.row; i < fs.Length; i++)
             {
@@ -1296,238 +1623,27 @@ namespace SeaBattle
                 }
             }
             return true;
-        }
-        /// <summary>
-        /// This method check activated cells nearby, and add them to the current ship
-        /// </summary>
-        /// <param name="l"></param>
-        /// <param name="fs"></param>
-        /// <param name="typeOfShip"></param>
-        /// <returns></returns>
-        public static bool CheckPartition(Location l, GameField field)
-        {
-            int[][] fs = field.LocationsActivity();
-            Ship temps = new Ship();
-            bool addPart = false;
-            for (int i = l.row; i < fs.Length; i++)
-            {
-                if (l.row == 9)
-                {
-                    break;
-                }
-                if (fs[i][l.cell] == 1)
-                {
-                    for (int k = l.row; k >= 0; k--)
-                    {
-                        if (fs[k][l.cell] == 1)
-                        {
-                            foreach (var s in userField.ships)
-                            {
-                                MessageBox.Show(addPart.ToString());
-                                if (s.SearchShip(k, l.cell))
-                                {
-                                    if (field.SearchShipG(k, l.cell).CountCells() < 2 && field.SearchShipG(i, l.cell).CountCells() < 3 && field.fourcellship < 1 || field.SearchShipG(k, l.cell).CountCells() < 2 &&
-                                        field.SearchShipG(i, l.cell).CountCells() < 2 && field.threeCellships < 2)
-                                    {
-                                        addPart = true;
-                                        temps = s;
-                                        foreach (var loc in s.locations)
-                                        {
-                                            WriteToLog("Size: " + s.locations.Count + " K: " + k + " Loc.row: " + loc.row + " Loc.cell: " + loc.cell, new StackTrace());
-                                            field.AddRowShip(i, l.cell, loc.row);
-                                            field.ships.Remove(temps);
-                                        }
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        else if (k != l.row && fs[k][l.cell] != 1 || k == 0)
-                        {
-                            addPart = true;
-                        }
-                        if (addPart)
-                        {
-                            field.AddRowShip(i, l.cell, l.row);//Add cell to the existing vertical ship
-                            return true;
-                        }
-                        if (l.row - k == 1)
-                        {
-                            break;
-                        }
-                    }
-                }
-                if (i - l.row == 1)
-                {
-                    break;
-                }
-                //MessageBox.Show("Hello suka, you catch gay panic #1");
-            }
-            for (int i = l.row; i >= 0; i--)
-            {
-                if (l.row == 0)
-                {
-                    break;
-                }
-                if (fs[i][l.cell] == 1)
-                {
-                    for (int k = l.row; k < fs.Length; k++)
-                    {
-                        if (fs[k][l.cell] == 1)
-                        {
-                            foreach (var s in userField.ships)
-                            {
-                                if (s.SearchShip(k, l.cell))
-                                {
-                                    if (field.SearchShipG(k, l.cell).CountCells() < 2 && field.SearchShipG(i, l.cell).CountCells() < 3 && field.fourcellship < 1 || field.SearchShipG(k, l.cell).CountCells() < 2 &&
-                                        field.SearchShipG(i, l.cell).CountCells() < 2 && field.threeCellships < 2)
-                                    {
-                                        addPart = true;
-                                        temps = s;
-                                        foreach (var loc in s.locations)
-                                        {
-                                            WriteToLog("Size: " + s.locations.Count + " K: " + k + " Loc.row: " + loc.row + " Loc.cell: " + loc.cell, new StackTrace());
-                                            field.AddRowShip(i, l.cell, loc.row);
-                                            field.ships.Remove(temps);
-                                        }
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        else if (k != l.row && fs[k][l.cell] != 1 || k == 9)
-                        {
-                            addPart = true;
-                        }
-                        if (addPart)
-                        {
-                            userField.AddRowShip(i, l.cell, l.row);//Add cell to the existing vertical ship
-                            return true;
-                        }
-                        if (k - l.row == 1)
-                        {
-                            break;
-                        }
-                    }
-                    //MessageBox.Show("Hello suka, you catch gay panic V.2");
-                }
-                if (l.row - i == 1)
-                {
-                    break;
-                    //MessageBox.Show("Hello suka, you catch gay panic #2");
-                }
-            }
-            for (int j = l.cell; j < fs[l.row].Length; j++)
-            {
-                if (l.cell == 9)
-                {
-                    break;
-                }
-                if (fs[l.row][j] == 1)
-                {
-                    for (int k = l.cell; k >= 0; k--)
-                    {
-                        if (fs[l.row][k] == 1)
-                        {
-                            foreach (var s in userField.ships)
-                            {
-                                if (s.SearchShip(l.row, k))
-                                {
-                                    if (field.SearchShipG(l.row, k).CountCells() < 2 && field.SearchShipG(l.row, j).CountCells() < 3 && field.fourcellship < 1 ||
-                                        field.SearchShipG(l.row, k).CountCells() < 2 && field.SearchShipG(l.row, j).CountCells() < 2 && field.threeCellships < 2)
-                                    {
-                                        addPart = true;
-                                        temps = s;
-                                        foreach (var loc in s.locations)
-                                        {
-                                            WriteToLog("Size: " + s.locations.Count + " K: " + k + " Loc.row: " + loc.row + " Loc.cell: " + loc.cell, new StackTrace());
-                                            field.AddCellShip(l.row, j, loc.cell);
-                                            field.ships.Remove(temps);
-                                        }
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        else if (l.cell != k && fs[l.row][k] != 1 || k == 9)
-                        {
-                            addPart = true;
-                        }
-                        if (addPart)
-                        {
-                            userField.AddCellShip(l.row, j, l.cell);//Add cell to the existing horizontal ship
-                            return true;
-                        }
-                        if (l.cell - k == 1)
-                        {
-                            break;
-                        }
-                    }
-                    return true;
-                }
-                if (j - l.cell == 1)
-                {
-                    //MessageBox.Show("Hello suka, you catch gay panic #3");
-                    break;
-                }
-            }
-            for (int j = l.cell; j >= 0; j--)
-            {
-                if (l.cell == 0)
-                {
-                    break;
-                }
-                if (fs[l.row][j] == 1)
-                {
-                    //MessageBox.Show("Hello suka, you catch gay panic V.4");
-                    for (int k = l.cell; k < fs.Length; k++)
-                    {
-                        if (fs[l.row][k] == 1)
-                        {
-                            foreach (var s in userField.ships)
-                            {
-                                if (s.SearchShip(l.row, k))
-                                {
-                                    if (field.SearchShipG(l.row, k).CountCells() < 2 && field.SearchShipG(l.row, j).CountCells() < 3 && field.fourcellship < 1 ||
-                                        field.SearchShipG(l.row, k).CountCells() < 2 && field.SearchShipG(l.row, j).CountCells() < 2 && field.threeCellships < 2)
-                                    {
-                                        addPart = true;
-                                        temps = s;
-                                        foreach (var loc in s.locations)
-                                        {
-                                            WriteToLog("Size: " + s.locations.Count + " K: " + k + " Loc.row: " + loc.row + " Loc.cell: " + loc.cell, new StackTrace());
-                                            field.AddCellShip(l.row, j, loc.cell);
-                                            field.ships.Remove(temps);
-                                        }
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        else if (l.cell != k && fs[l.row][k] != 1 || k == 9)
-                        {
-                            addPart = true;
-                        }
-                        if (addPart)
-                        {
-                            userField.AddCellShip(l.row, j, l.cell);//Add cell to the existing horizontal ship
-                            return true;
-                        }
-                        if (k - l.cell == 1)
-                        {
-                            break;
-                        }
-                    }
-                }
-                if (l.cell - j == 1)
-                {
-                    //MessageBox.Show("Hello suka, you catch gay panic #4");
-                    break;
-                }
-            }
-            return false;
+
         }
 
+        /// <summary>
+        /// This method delete all ships, and return map to the default view
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void ClearField(object sender, RoutedEventArgs e)
+        {
+            userField.ships.Clear();
+            for (int i = 0; i < userField.buttons.Length; i++)
+            {
+                for (int j = 0; j < userField.buttons[i].Length; j++)
+                {
+                    userField.buttons[i][j].Background = defaultCellColor;
+                    userField.buttons[i][j].Content = "0";
+                }
+            }
+            userField.checkAllShip();
+        }
         /// <summary>
         /// This method add new ship while reseting the another one
         /// </summary>
@@ -1544,89 +1660,6 @@ namespace SeaBattle
         public static void AddPartShipRes(Ship s, Location loc, Button[][] buttons)
         {
             s.locations.Add(loc);
-        }
-        /// <summary>
-        /// This method is used for checking what button has pressed, then we check if button has been activated or no. If button is not activated, program will count active ships.
-        /// If all ships are not picked, it will be created object, which consist of adress of button. Then program will check cells nearby. If activated cells are not espied, new ship will be created as a object. If not, program
-        /// will check cells, and add this addres to current ship
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        public void AddUserShip(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                Button pressedButton = sender as Button;
-                bool breakOperand = false;
-                for (int i = 0; i < userButtons.Length; i++)
-                {
-                    for (int j = 0; j < userButtons[i].Length; j++)
-                    {
-                        if (pressedButton == userButtons[i][j])
-                        {
-                            breakOperand = true;
-                            //MessageBox.Show(userField.GetTwoCellShip().ToString());
-                            if (pressedButton.Background != defaultCellColor)
-                            {
-                                if (deleteMode)
-                                {
-                                    userField.ResetLocation(i, j, userButtons);//If button has been activated, the method will reset location, and delete adress from ship's list
-                                }
-                                else
-                                    MessageBox.Show("Activate deleting mode using the button: Delete ship.");
-                                break;
-                            }
-                            else if (pressedButton.Background == defaultCellColor && deleteMode)
-                            {
-                                MessageBox.Show("Choose only activated cell to remove the ships please.");
-                                break;
-                            }
-                            else if (userField.DoExistAllShips())
-                            {
-                                Location l = new Location();
-                                l.SetLocation(i, j);
-                                if (CheckNearbyShip(l, userField) && CheckDiagonalCell(l, userField.LocationsActivity()) && userField.DoExistAllShips())//Check cells nearby
-                                {
-                                    Ship s = new Ship();
-                                    Location l1 = new Location();
-                                    l1.SetLocation(i, j);
-                                    s.locations.Add(l1);
-                                    userField.ships.Add(s);
-                                    userButtons[i][j].Content = "1";
-                                    break;
-                                }
-                                else if (CheckDiagonalCell(l, userField.LocationsActivity()))//Check cells to add them to the current ship
-                                {
-                                    bool succesufulAdding = CheckPartition(l, userField);
-                                    if (succesufulAdding)
-                                    {
-                                        break;
-                                    }
-                                    else if (!succesufulAdding)
-                                    {
-                                        MessageBox.Show("You can't connect the two ships into the one.");
-                                    }
-                                    break;
-                                }
-                                else MessageBox.Show("You can't place ship there.");
-                            }
-                            else MessageBox.Show("You have used all ships, Let's start."); //If all ships have been picked
-                        }
-                    }
-                    if (breakOperand)
-                    {
-                        userField.checkAllShip(userButtons);
-                        userField.SortShipsCoordinate();
-                        countActiveCell(userField, userButtons);
-                        break;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-                throw;
-            }
         }
     }
 }
