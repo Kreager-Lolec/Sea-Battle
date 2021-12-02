@@ -22,8 +22,8 @@ namespace SeaBattle
         static bool startGame = false;
         static bool deleteMode = false;
         static Button stopDM = new Button();
+        const int cellsize = 30;
         const int mapsize = 11;
-        int cellsize = 30;
         string namecell = "ABCDEFGHIJ";
         static private string logPath = "log.txt";
         static public Brush fourCellColor = Brushes.Green;
@@ -148,16 +148,17 @@ namespace SeaBattle
                     s.SortLocs();
                 }
             }
-            public Ship SearchShipG(int row, int cell)
+
+            public int GetShipSize(int row, int cell)
             {
                 foreach (var ship in ships)
                 {
                     if (ship.DoesShipExist(row, cell))
                     {
-                        return ship;
+                        return ship.locations.Count;
                     }
                 }
-                return null;
+                return 10;
             }
             public bool DoesExistShip(int row, int cell)
             {
@@ -170,7 +171,17 @@ namespace SeaBattle
                 }
                 return false;
             }
-
+            public Ship GetShip(int row, int cell)
+            {
+                foreach (var ship in ships)
+                {
+                    if (ship.DoesShipExist(row, cell))
+                    {
+                        return ship;
+                    }
+                }
+                return null;
+            }
             public bool DoesExistAllships()
             {
                 if (ships.Count > 10)
@@ -507,7 +518,7 @@ namespace SeaBattle
                                     }
                                     else if (sessionnumber == 1)
                                     {
-                                        
+
                                     }
                                 }
                                 //If all ships have been picked
@@ -559,9 +570,9 @@ namespace SeaBattle
                                 {
                                     if (s.DoesShipExist(k, l.cell))
                                     {
-                                        
-                                        if (s.GetShipSize(k, l.cell) < 2 && s.GetShipSize(i, l.cell) < 3 && fourcellship < 1 || s.GetShipSize(k, l.cell) < 2 &&
-                                            s.GetShipSize(i, l.cell) < 2 && threeCellships < 2)
+
+                                        if (GetShipSize(k, l.cell) < 2 && GetShipSize(i, l.cell) < 3 && fourcellship < 1 || GetShipSize(k, l.cell) < 2 &&
+                                            GetShipSize(i, l.cell) < 2 && threeCellships < 2)
                                         {
                                             addPart = true;
                                             temps = s;
@@ -613,8 +624,8 @@ namespace SeaBattle
                                 {
                                     if (s.DoesShipExist(k, l.cell))
                                     {
-                                        if (s.GetShipSize(k, l.cell) < 2 && s.GetShipSize(i, l.cell) < 3 && fourcellship < 1 || s.GetShipSize(k, l.cell) < 2 &&
-                                            s.GetShipSize(i, l.cell) < 2 && threeCellships < 2)
+                                        if (GetShipSize(k, l.cell) < 2 && GetShipSize(i, l.cell) < 3 && fourcellship < 1 || GetShipSize(k, l.cell) < 2 &&
+                                            GetShipSize(i, l.cell) < 2 && threeCellships < 2)
                                         {
                                             addPart = true;
                                             temps = s;
@@ -667,8 +678,8 @@ namespace SeaBattle
                                 {
                                     if (s.DoesShipExist(l.row, k))
                                     {
-                                        if (s.GetShipSize(l.row, k) < 2 && s.GetShipSize(l.row, j) < 3 && fourcellship < 1 ||
-                                            s.GetShipSize(l.row, k) < 2 && s.GetShipSize(l.row, j) < 2 && threeCellships < 2)
+                                        if (GetShipSize(l.row, k) < 2 && GetShipSize(l.row, j) < 3 && fourcellship < 1 ||
+                                            GetShipSize(l.row, k) < 2 && GetShipSize(l.row, j) < 2 && threeCellships < 2)
                                         {
                                             addPart = true;
                                             temps = s;
@@ -722,8 +733,8 @@ namespace SeaBattle
                                 {
                                     if (s.DoesShipExist(l.row, k))
                                     {
-                                        if (s.GetShipSize(l.row, k) < 2 && s.GetShipSize(l.row, j) < 3 && fourcellship < 1 ||
-                                            s.GetShipSize(l.row, k) < 2 && s.GetShipSize(l.row, j) < 2 && threeCellships < 2)
+                                        if (GetShipSize(l.row, k) < 2 && GetShipSize(l.row, j) < 3 && fourcellship < 1 ||
+                                            GetShipSize(l.row, k) < 2 && GetShipSize(l.row, j) < 2 && threeCellships < 2)
                                         {
                                             addPart = true;
                                             temps = s;
@@ -1078,27 +1089,27 @@ namespace SeaBattle
                 {
                     for (int j = 0; j < fs[i].Length; j++)
                     {
-                        if (!checkList.Contains(userField.SearchShipG(i, j)))
+                        if (!checkList.Contains(userField.GetShip(i, j)))
                         {
                             if (tempbuttons[i][j].Background == fourCellColor)
                             {
-                                fourCellAvail += userField.SearchShipG(i, j).CountCells();
-                                checkList.Add(userField.SearchShipG(i, j));
+                                fourCellAvail += userField.GetShip(i, j).CountCells();
+                                checkList.Add(userField.GetShip(i, j));
                             }
                             else if (tempbuttons[i][j].Background == threeCellColor)
                             {
-                                threeCellAvail += userField.SearchShipG(i, j).CountCells();
-                                checkList.Add(userField.SearchShipG(i, j));
+                                threeCellAvail += userField.GetShip(i, j).CountCells();
+                                checkList.Add(userField.GetShip(i, j));
                             }
                             else if (tempbuttons[i][j].Background == twoCellColor)
                             {
-                                twoCellAvail += userField.SearchShipG(i, j).CountCells();
-                                checkList.Add(userField.SearchShipG(i, j));
+                                twoCellAvail += userField.GetShip(i, j).CountCells();
+                                checkList.Add(userField.GetShip(i, j));
                             }
                             else if (tempbuttons[i][j].Background == oneCellColor)
                             {
-                                oneCellAvail += userField.SearchShipG(i, j).CountCells();
-                                checkList.Add(userField.SearchShipG(i, j));
+                                oneCellAvail += userField.GetShip(i, j).CountCells();
+                                checkList.Add(userField.GetShip(i, j));
                             }
                         }
                     }
@@ -1226,18 +1237,6 @@ namespace SeaBattle
                 }
                 return false;
             }
-            public int GetShipSize(int row, int cell)
-            {
-                foreach (Location l in locations)
-                {
-                    if (l.row == row && l.cell == cell)
-                    {
-                        WriteToLog("Searched row: " + l.row + " Searched cell: " + l.cell);
-                        return locations.Count;
-                    }
-                }
-                return 0;
-            }
             public void SortLocs()
             {
                 int temprow = 0;
@@ -1262,15 +1261,33 @@ namespace SeaBattle
                 }
             }
         }
-        public void Init()
+        public void CreateStopDeleteButton()
         {
-            stopDM.Width = 150;
-            stopDM.Height = 32;
             stopDM.Content = "Stop the deleting mode";
             stopDM.Visibility = Visibility.Hidden;
             stopDM.Click += StopDelete;
-            ButtonMap.Children.Add(stopDM);
+            FunctionalMap.Children.Add(stopDM);
+            Grid.SetRow(stopDM, 1);
+            Grid.SetColumn(stopDM, 3);
+            Grid.SetColumnSpan(stopDM, 2);
+        }
+        public void InitializeLabelColor()
+        {
+            Label UserLabel = new Label();
+            UserMap.RowDefinitions.Add(new RowDefinition());
+            UserMap.Children.Add(UserLabel);
+            UserLabel.Background = Brushes.Bisque;
+            UserLabel.HorizontalContentAlignment = HorizontalAlignment.Center;
+            UserLabel.Content = "User Map";
+            UserLabel.FontSize = 20;
+            Grid.SetRow(UserLabel, 0);
+            Grid.SetColumnSpan(UserLabel, 11);
+        }
+        public void Init()
+        {
             CreateMap();
+            CreateStopDeleteButton();
+            //InitializeLabelColor();
             availableShipField.ShowAvailableShip();
         }
         /// <summary>
@@ -1316,92 +1333,128 @@ namespace SeaBattle
         {
             for (int i = 0; i < mapsize; i++)
             {
+                RowDefinition gridRow1 = new RowDefinition();
+                ColumnDefinition gridColumn1 = new ColumnDefinition();
+                UserMap.RowDefinitions.Add(gridRow1);
+                UserMap.ColumnDefinitions.Add(gridColumn1);
                 for (int j = 0; j < mapsize; j++)
                 {
                     Button button = new Button();
                     if (i == 0 || j == 0)
                     {
-                        button.Width = cellsize;
-                        button.Height = cellsize;
                         button.Background = new SolidColorBrush(Colors.Gray);
+                        UserMap.Children.Add(button);
                         if (i == 0 && j > 0)
                         {
                             button.Content = namecell[j - 1].ToString();
+                            Grid.SetColumn(button, j);
+                            Grid.SetRow(button, i + 1);
                         }
                         else if (j == 0 && i > 0)
                         {
                             button.Content = i.ToString();
+                            Grid.SetRow(button, i + 1);
                         }
-                        Map.Children.Add(button);
+                        else if (i == 0 && j == 0)
+                        {
+                            Grid.SetRow(button, i + 1);
+                            Grid.SetColumn(button, j);
+                        }
                     }
                     else
                     {
-                        userField.buttons[i - 1][j - 1].Width = cellsize;
-                        userField.buttons[i - 1][j - 1].Height = cellsize;
+                        UserMap.Children.Add(userField.buttons[i - 1][j - 1]);
+                        Grid.SetRow(userField.buttons[i - 1][j - 1], i + 1);
+                        Grid.SetColumn(userField.buttons[i - 1][j - 1], j);
                         userField.buttons[i - 1][j - 1].Background = defaultCellColor;
                         userField.buttons[i - 1][j - 1].Click += userField.AddShip;
-                        userField.buttons[i - 1][j - 1].Tag = "UserShip";
-                        Map.Children.Add(userField.buttons[i - 1][j - 1]);
                     }
                 }
             }
             for (int i = 0; i < mapsize; i++)
             {
+                RowDefinition gridRow1 = new RowDefinition();
+                ColumnDefinition gridColumn1 = new ColumnDefinition();
+                EnemyMap.RowDefinitions.Add(gridRow1);
+                EnemyMap.ColumnDefinitions.Add(gridColumn1);
                 for (int j = 0; j < mapsize; j++)
                 {
                     Button button = new Button();
                     if (i == 0 || j == 0)
                     {
-                        button.Width = cellsize;
-                        button.Height = cellsize;
                         button.Background = new SolidColorBrush(Colors.Gray);
+                        EnemyMap.Children.Add(button);
                         if (i == 0 && j > 0)
                         {
                             button.Content = namecell[j - 1].ToString();
+                            Grid.SetColumn(button, j + 2);
+                            Grid.SetRow(button, i + 1);
                         }
                         else if (j == 0 && i > 0)
                         {
                             button.Content = i.ToString();
+                            Grid.SetRow(button, i + 1);
+                            Grid.SetColumn(button, j + 2);
                         }
-                        EnemyMap.Children.Add(button);
+                        else if (i == 0 && j == 0)
+                        {
+                            Grid.SetRow(button, i + 1);
+                            Grid.SetColumn(button, j + 2);
+                        }
+                        button.Background = new SolidColorBrush(Colors.Gray);
+
                     }
                     else
                     {
-                        enemyField.buttons[i - 1][j - 1].Width = cellsize;
-                        enemyField.buttons[i - 1][j - 1].Height = cellsize;
+                        EnemyMap.Children.Add(enemyField.buttons[i - 1][j - 1]);
+                        Grid.SetRow(enemyField.buttons[i - 1][j - 1], i + 1);
+                        Grid.SetColumn(enemyField.buttons[i - 1][j - 1], j + 2);
                         enemyField.buttons[i - 1][j - 1].Background = defaultCellColor;
                         enemyField.buttons[i - 1][j - 1].Click += enemyField.AddShip;
-                        EnemyMap.Children.Add(enemyField.buttons[i - 1][j - 1]);
                     }
                 }
             }
             for (int i = 0; i < mapsize; i++)
             {
+
+                RowDefinition gridRow1 = new RowDefinition();
+                ColumnDefinition gridColumn1 = new ColumnDefinition();
+                Shipmap.RowDefinitions.Add(gridRow1);
+                Shipmap.ColumnDefinitions.Add(gridColumn1);
                 for (int j = 0; j < mapsize; j++)
                 {
                     Button button = new Button();
                     if (i == 0 || j == 0)
                     {
-                        button.Width = cellsize;
-                        button.Height = cellsize;
                         button.Background = new SolidColorBrush(Colors.Gray);
+                        Shipmap.Children.Add(button);
                         if (i == 0 && j > 0)
                         {
                             button.Content = namecell[j - 1].ToString();
+                            Grid.SetColumn(button, j + 2);
+                            Grid.SetRow(button, i + 1);
                         }
                         else if (j == 0 && i > 0)
                         {
                             button.Content = i.ToString();
+                            Grid.SetRow(button, i + 1);
+                            Grid.SetColumn(button, j + 2);
                         }
-                        Shipmap.Children.Add(button);
+                        else if (i == 0 && j == 0)
+                        {
+                            Grid.SetRow(button, i + 1);
+                            Grid.SetColumn(button, j + 2);
+                        }
+                        button.Background = new SolidColorBrush(Colors.Gray);
+
                     }
                     else
                     {
-                        availableShipField.buttons[i - 1][j - 1] = button;
-                        availableShipField.buttons[i - 1][j - 1].Width = cellsize;
-                        availableShipField.buttons[i - 1][j - 1].Height = cellsize;
-                        availableShipField.buttons[i - 1][j - 1].Background = defaultCellColor;
                         Shipmap.Children.Add(availableShipField.buttons[i - 1][j - 1]);
+                        Grid.SetRow(availableShipField.buttons[i - 1][j - 1], i + 1);
+                        Grid.SetColumn(availableShipField.buttons[i - 1][j - 1], j + 2);
+                        availableShipField.buttons[i - 1][j - 1].Background = defaultCellColor;
+                        availableShipField.buttons[i - 1][j - 1].Click += availableShipField.AddShip;
                     }
                 }
             }
@@ -1643,6 +1696,9 @@ namespace SeaBattle
                 }
             }
             userField.checkAllShip();
+            availableShipField.ships.Clear();
+            availableShipField.ShowAvailableShip();
+            availableShipField.checkAllShip();
         }
         /// <summary>
         /// This method add new ship while reseting the another one

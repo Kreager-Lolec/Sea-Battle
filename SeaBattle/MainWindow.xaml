@@ -5,10 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SeaBattle"
         Title="Seabattle"
-        mc:Ignorable="d" Height="750" Width="800">
+        mc:Ignorable="d" Height="750" Width="1100">
 
-    <!--<Grid>
+    <Grid Name="GeneralMap">
         <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
@@ -16,11 +18,58 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <WrapPanel Name="ButtonMap" Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
-        </WrapPanel>
-    </Grid>-->
+        <Grid Name="UserMap" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Label Content="User Map" Name="UserLabel" FontSize="20" Grid.Row="0" Background="Bisque" Grid.ColumnSpan="11" HorizontalContentAlignment="Center"/>
+        </Grid>
+        <Grid Name="EnemyMap" Grid.Row="0" Grid.Column="1" Visibility="Hidden" Grid.RowSpan="3">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Enemy Map" Name="EnemyLabel" FontSize="20" Grid.Row="0" Grid.Column="2" Background="Bisque" Grid.ColumnSpan="11" HorizontalContentAlignment="Center"/>
+        </Grid>
+        <Grid Name="Shipmap" Grid.Row="0" Grid.Column="1" Grid.RowSpan="3">
+            <Grid.RowDefinitions>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Label Content="AvalaibleShips Map" Name="AvailableShipLabel" FontSize="20" Grid.Row="0" Grid.Column="2" Background="Bisque" Grid.ColumnSpan="11" HorizontalContentAlignment="Center"/>
+        </Grid>
+        <Grid Name="FunctionalMap" Grid.Row="4" Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Button Content="Start"  Click="Start" HorizontalAlignment="Left" Grid.Column="0" Grid.Row="1" Width="70"/>
+            <Button Content="Clear Field"  Click="ClearField" HorizontalAlignment="Left"  Grid.Column="2" Grid.Row="1" />
+            <Button Content="Delete Ship" Click="DeleteMode" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left"  />
+        </Grid>
+    </Grid>
 
-    <WrapPanel Name="Layout"  Orientation="Horizontal" Width="700" Height="650" Margin="34,0,34.8,-19.8">
+    <!--<WrapPanel Name="Layout"  Orientation="Horizontal" Width="700" Height="650" Margin="34,0,34.8,-19.8">
         <WrapPanel x:Name="Map" Margin="0,0,334,239.2" Width="330" Height="434">
             <Label Content="                     Your Map" Height="35" Width="331" FontSize="20" Background="Bisque"/>
         </WrapPanel>
@@ -28,9 +77,11 @@
             <Label Content="                Available Ships" Height="35" Width="331" FontSize="20" Background="Bisque"/>
         </WrapPanel>
         <WrapPanel x:Name ="EnemyMap" Width="330" Margin="-320,0,0,239.2" Height="434" Visibility="Hidden">
-            <!--<InkCanvas>
+            
+    <InkCanvas>
                 <Image Source="resourse\prukol.jpg"  Width="330" Height="434"  />
-            </InkCanvas>-->
+            </InkCanvas>
+    
             <Label Content="                     Enemy Map" Height="35" Width="331" FontSize="20" Background="Bisque"/>
         </WrapPanel>
         <Button Content="Start" Width="75" Height="32" Margin="0,-400,0,100" Click="Start"/>
@@ -39,5 +90,5 @@
         <ListBox Height="100" Width="100" RenderTransformOrigin="0.947,-1.714"/>
         <WrapPanel Name="ButtonMap" Height="32" Width="150"  Margin="-200,-320,0,100">
         </WrapPanel>
-    </WrapPanel>
+    </WrapPanel>-->
 </Window>
