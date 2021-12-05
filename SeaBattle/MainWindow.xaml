@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SeaBattle"
         Title="Seabattle"
-        mc:Ignorable="d" Height="750" Width="1100">
+        mc:Ignorable="d" Height="750" Width="1100" Loaded="Window_Loaded">
 
     <Grid Name="GeneralMap">
         <Grid.RowDefinitions>
@@ -26,7 +26,7 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Label Content="User Map" Name="UserLabel" FontSize="20" Grid.Row="0" Background="Bisque" Grid.ColumnSpan="11" HorizontalContentAlignment="Center"/>
+            <Label Content="User Map" Name="UserLabel" FontSize="20" Grid.Row="0" Background="Bisque" Grid.ColumnSpan="11" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
         </Grid>
         <Grid Name="EnemyMap" Grid.Row="0" Grid.Column="1" Visibility="Hidden" Grid.RowSpan="3">
             <Grid.RowDefinitions>
@@ -36,16 +36,17 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Label Content="Enemy Map" Name="EnemyLabel" FontSize="20" Grid.Row="0" Grid.Column="2" Background="Bisque" Grid.ColumnSpan="11" HorizontalContentAlignment="Center"/>
+            <Label Content="Enemy Map" Name="EnemyLabel" FontSize="20" Grid.Row="0" Grid.Column="2" Background="Bisque" Grid.ColumnSpan="11" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
         </Grid>
         <Grid Name="Shipmap" Grid.Row="0" Grid.Column="1" Grid.RowSpan="3">
             <Grid.RowDefinitions>
+                <RowDefinition/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Label Content="AvalaibleShips Map" Name="AvailableShipLabel" FontSize="20" Grid.Row="0" Grid.Column="2" Background="Bisque" Grid.ColumnSpan="11" HorizontalContentAlignment="Center"/>
+            <Label Content="AvalaibleShips Map" Name="AvailableShipLabel" FontSize="20" Grid.Row="0" Grid.Column="2" Background="Bisque" Grid.ColumnSpan="11" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
         </Grid>
         <Grid Name="FunctionalMap" Grid.Row="4" Grid.Column="0">
             <Grid.RowDefinitions>
@@ -66,6 +67,7 @@
             <Button Content="Start"  Click="Start" HorizontalAlignment="Left" Grid.Column="0" Grid.Row="1" Width="70"/>
             <Button Content="Clear Field"  Click="ClearField" HorizontalAlignment="Left"  Grid.Column="2" Grid.Row="1" />
             <Button Content="Delete Ship" Click="DeleteMode" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left"  />
+            <Button Content="Reset Timer" Click="ResetTimer" Grid.Column="0" Grid.Row="2" />
         </Grid>
     </Grid>
 

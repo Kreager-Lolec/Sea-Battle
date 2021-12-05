@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Linq;
+using System.Windows.Threading;
 
 namespace SeaBattle
 {
@@ -34,6 +35,12 @@ namespace SeaBattle
         static public Brush usedCellColor = Brushes.DarkGray;
         static public Brush brokenCellColor = Brushes.Red;
         static public bool displayContent = true;
+        DispatcherTimer dt = new DispatcherTimer();
+        int seconds = 0;
+        int minutes = 0;
+        string defaultValueTimer = "00:00";
+        Label lTimer = new Label();
+        Label fTimer = new Label();
         /// <summary>
         /// Method, which write information to the log
         /// </summary>
@@ -452,87 +459,87 @@ namespace SeaBattle
             {
                 try
                 {
-                    Button pressedButton = sender as Button;
-                    bool breakOperand = false;
-                    for (int i = 0; i < buttons.Length; i++)
+                    if (sessionnumber == 0)
                     {
-                        for (int j = 0; j < buttons[i].Length; j++)
+                        Button pressedButton = sender as Button;
+                        bool breakOperand = false;
+                        for (int i = 0; i < buttons.Length; i++)
                         {
-                            if (pressedButton == buttons[i][j])
+                            for (int j = 0; j < buttons[i].Length; j++)
                             {
-                                breakOperand = true;
-                                //MessageBox.Show(userField.GetTwoCellShip().ToString());
-                                if (pressedButton.Background != defaultCellColor)
+                                if (pressedButton == buttons[i][j])
                                 {
-                                    if (deleteMode)
+                                    breakOperand = true;
+                                    //MessageBox.Show(userField.GetTwoCellShip().ToString());
+                                    if (pressedButton.Background != defaultCellColor)
                                     {
-                                        ResetLocation(i, j);//If button has been activated, the method will reset location, and delete adress from ship's list
-                                    }
-                                    else
-                                        MessageBox.Show("Activate deleting mode using the button: Delete ship.");
-                                    break;
-                                }
-                                else if (pressedButton.Background == defaultCellColor && deleteMode)
-                                {
-                                    MessageBox.Show("Choose only activated cell to remove the ships please.");
-                                    break;
-                                }
-                                else if (DoesNotExistAllTypesOfShips())
-                                {
-                                    Location l = new Location();
-                                    l.SetLocation(i, j);
-                                    if (CheckNearbyShip(l, LocationsActivity()) && CheckDiagonalCell(l, LocationsActivity()))//Check cells nearby
-                                    {
-                                        Ship s = new Ship();
-                                        Location l1 = new Location();
-                                        l1.SetLocation(i, j);
-                                        s.locations.Add(l1);
-                                        ships.Add(s);
-                                        if (DoesExistAllships())
+                                        if (deleteMode)
                                         {
-                                            s.brokenShip = true;
+                                            ResetLocation(i, j);//If button has been activated, the method will reset location, and delete adress from ship's list
                                         }
-                                        buttons[i][j].Content = "1";
+                                        else
+                                            MessageBox.Show("Activate deleting mode using the button: Delete ship.");
                                         break;
                                     }
-                                    else if (CheckDiagonalCell(l, LocationsActivity()))//Check cells to add them to the current ship
+                                    else if (pressedButton.Background == defaultCellColor && deleteMode)
                                     {
-                                        bool succesufulAdding = CheckPartition(l);
-                                        if (succesufulAdding)
+                                        MessageBox.Show("Choose only activated cell to remove the ships please.");
+                                        break;
+                                    }
+                                    else if (DoesNotExistAllTypesOfShips())
+                                    {
+                                        Location l = new Location();
+                                        l.SetLocation(i, j);
+                                        if (CheckNearbyShip(l, LocationsActivity()) && CheckDiagonalCell(l, LocationsActivity()))//Check cells nearby
                                         {
+                                            Ship s = new Ship();
+                                            Location l1 = new Location();
+                                            l1.SetLocation(i, j);
+                                            s.locations.Add(l1);
+                                            ships.Add(s);
+                                            if (DoesExistAllships())
+                                            {
+                                                s.brokenShip = true;
+                                            }
+                                            buttons[i][j].Content = "1";
                                             break;
                                         }
-                                        else if (!succesufulAdding)
+                                        else if (CheckDiagonalCell(l, LocationsActivity()))//Check cells to add them to the current ship
                                         {
-                                            MessageBox.Show("You can't connect the two ships into the one.");
+                                            bool succesufulAdding = CheckPartition(l);
+                                            if (succesufulAdding)
+                                            {
+                                                break;
+                                            }
+                                            else if (!succesufulAdding)
+                                            {
+                                                MessageBox.Show("You can't connect the two ships into the one.");
+                                            }
+                                            break;
                                         }
-                                        break;
+                                        else MessageBox.Show("You can't place ship there.");
                                     }
-                                    else MessageBox.Show("You can't place ship there.");
-                                }
-                                else
-                                {
-                                    if (sessionnumber == 0)
+                                    else
                                     {
-                                        MessageBox.Show("You have used all ships, Let's start.");
-                                    }
-                                    else if (sessionnumber == 1)
-                                    {
+                                        if (sessionnumber == 0)
+                                        {
+                                            MessageBox.Show("You have used all ships, Let's start.");
+                                        }
+                                        else if (sessionnumber == 1)
+                                        {
 
+                                        }
                                     }
+                                    //If all ships have been picked
                                 }
-                                //If all ships have been picked
                             }
-                        }
-                        if (breakOperand)
-                        {
-                            checkAllShip();
-                            SortShipsCoordinate();
-                            if (sessionnumber == 0)
+                            if (breakOperand)
                             {
+                                checkAllShip();
+                                SortShipsCoordinate();
                                 availableShipField.countActiveCell();
+                                break;
                             }
-                            break;
                         }
                     }
                 }
@@ -1283,10 +1290,38 @@ namespace SeaBattle
             Grid.SetRow(UserLabel, 0);
             Grid.SetColumnSpan(UserLabel, 11);
         }
+        public void InitializeTimerBlock()
+        {
+            lTimer.Content = "Timer: ";
+            UserMap.Children.Add(lTimer);
+            lTimer.VerticalContentAlignment = VerticalAlignment.Center;
+            lTimer.HorizontalContentAlignment = HorizontalAlignment.Right;
+            lTimer.FontSize = 20;
+            lTimer.Background = Brushes.Bisque;
+            Grid.SetRow(lTimer, 0);
+            Grid.SetColumn(lTimer, 11);
+            Grid.SetColumnSpan(lTimer, 2);
+            //EnemyMap.Children.Add(fTimer);
+            Shipmap.Children.Add(fTimer);
+            fTimer.VerticalContentAlignment = VerticalAlignment.Center;
+            fTimer.HorizontalContentAlignment = HorizontalAlignment.Left;
+            fTimer.Background = Brushes.Bisque;
+            fTimer.Content = defaultValueTimer;
+            fTimer.FontSize = 20;
+            Grid.SetRow(fTimer, 0);
+            Grid.SetColumn(fTimer, 0);
+            Grid.SetColumnSpan(fTimer, 2);
+        }
+        public void ReinitializeTimerBlock()
+        {
+            Shipmap.Children.Remove(fTimer);
+            EnemyMap.Children.Add(fTimer);
+        }
         public void Init()
         {
             CreateMap();
             CreateStopDeleteButton();
+            InitializeTimerBlock();
             //InitializeLabelColor();
             availableShipField.ShowAvailableShip();
         }
@@ -1461,11 +1496,29 @@ namespace SeaBattle
         }
         private void Start(object sender, RoutedEventArgs e)
         {
-            if (CheckCorrectStart())
+            if (sessionnumber == 0)
             {
-                sessionnumber++;
                 EnemyMap.Visibility = Visibility.Visible;
                 Shipmap.Visibility = Visibility.Hidden;
+                if (CheckCorrectStart())
+                {
+                    sessionnumber++;
+                    ReinitializeTimerBlock();
+                    
+                    //EnemyMap.Visibility = Visibility.Visible;
+                    //Shipmap.Visibility = Visibility.Hidden;
+                }
+            }
+        }
+        public void ResetTimer(object sender, RoutedEventArgs e)
+        {
+            if (seconds >= 5)
+            {
+                dt.Stop();
+                fTimer.Content = defaultValueTimer;
+                seconds = 0;
+                minutes = 0;
+                dt.Start();
             }
         }
         public bool CheckCorrectStart()
@@ -1489,7 +1542,7 @@ namespace SeaBattle
                 "\nThe List of the ships: " + "\n" + message + "\nRemove these ships please!");
                 return false;
             }
-            if (userField.DoesNotExistAllTypesOfShips())
+            if (userField.DoesNotExistAllTypesOfShips() || enemyField.DoesNotExistAllTypesOfShips())
             {
                 MessageBox.Show("You can't start game because of:" +
                         " You haven't placed all ships. Please check available ships on the right field.");
@@ -1716,6 +1769,33 @@ namespace SeaBattle
         public static void AddPartShipRes(Ship s, Location loc, Button[][] buttons)
         {
             s.locations.Add(loc);
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            dt.Interval = TimeSpan.FromSeconds(1);
+            dt.Tick += Tick;
+            dt.Start();
+        }
+
+        private void Tick(object sender, EventArgs e)
+        {
+            string displaySeconds = "0";
+            seconds++;
+            if (seconds == 60)
+            {
+                minutes++;
+                seconds = 0;
+            }
+            if (seconds <= 9)
+            {
+                displaySeconds += seconds.ToString();
+            }
+            else if (seconds >= 10 && seconds <= 60)
+            {
+                displaySeconds = seconds.ToString();
+            }
+            fTimer.Content = "0" + minutes.ToString() + ":" + displaySeconds;
         }
     }
 }
