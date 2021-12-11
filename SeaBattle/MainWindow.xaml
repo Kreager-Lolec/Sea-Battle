@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SeaBattle"
         Title="Seabattle"
-        mc:Ignorable="d" Height="750" Width="1100" Loaded="Window_Loaded">
+        mc:Ignorable="d" Height="750" Width="1100" Loaded="Window_Loaded" >
 
     <Grid Name="GeneralMap">
         <Grid.RowDefinitions>
@@ -65,9 +65,11 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Button Content="Start"  Click="Start" HorizontalAlignment="Left" Grid.Column="0" Grid.Row="1" Width="70"/>
-            <Button Content="Clear Field"  Click="ClearField" HorizontalAlignment="Left"  Grid.Column="2" Grid.Row="1" />
-            <Button Content="Delete Ship" Click="DeleteMode" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left"  />
-            <Button Content="Reset Timer" Click="ResetTimer" Grid.Column="0" Grid.Row="2" />
+            <Button Content="Clear your field"  Click="ClearYourField" HorizontalAlignment="Left"  Grid.Column="2" Grid.Row="1" />
+            <Button Content="Delete the ship" Click="DeleteMode" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left"  />
+            <Button Content="Reset the timer" Click="ResetTimer" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Left"/>
+            <Button Content="Restart the game" Click="RestartGame" Grid.Column="2" Grid.Row="3" Grid.ColumnSpan="2" HorizontalAlignment="Left"/>
+            <!--<Button Content="PickEnemyButtons" Click="Button_Click" Grid.Column="3" Grid.Row="2" />-->
         </Grid>
     </Grid>
 

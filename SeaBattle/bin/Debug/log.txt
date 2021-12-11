@@ -1,0 +1,66 @@
+[11.12.2021 16:00:23] PickShips()-> New Pick .
+[11.12.2021 16:00:23] PickShips()-> ----------------------------------------------------------------------------------------------------.
+[11.12.2021 16:00:23] randomCell()-> i: 6 j: 6 Locactivity: 0.
+[11.12.2021 16:00:23] PickShips()-> Add new Ship:  i: 6 j: 6.
+[11.12.2021 16:00:23] PickShips()-> ShipCount 1.
+[11.12.2021 16:00:23] PickShips()-> Add cell to the current Ship: .
+[11.12.2021 16:00:23] SetRoute()-> 6 8.
+[11.12.2021 16:00:23] ConstructShip()-> 3 Size Fourcell.
+[11.12.2021 16:00:23] SetRoute()-> 6 9.
+[11.12.2021 16:00:23] ConstructShip()-> 4 Size Fourcell.
+[11.12.2021 16:00:23] randomCell()-> i: 7 j: 0 Locactivity: 0.
+[11.12.2021 16:00:23] PickShips()-> Add new Ship:  i: 7 j: 0.
+[11.12.2021 16:00:23] PickShips()-> ShipCount 2.
+[11.12.2021 16:00:23] PickShips()-> Add cell to the current Ship: .
+[11.12.2021 16:00:24] SetRoute()-> 7 2.
+[11.12.2021 16:00:24] ConstructShip()-> 3 Size Threecell.
+[11.12.2021 16:00:24] randomCell()-> i: 5 j: 3 Locactivity: 0.
+[11.12.2021 16:00:24] PickShips()-> Add new Ship:  i: 5 j: 3.
+[11.12.2021 16:00:24] PickShips()-> ShipCount 3.
+[11.12.2021 16:00:24] PickShips()-> Add cell to the current Ship: .
+[11.12.2021 16:00:24] SetRoute()-> 5 5.
+[11.12.2021 16:00:24] randomCell()-> i: 0 j: 4 Locactivity: 0.
+[11.12.2021 16:00:24] PickShips()-> Add new Ship:  i: 0 j: 4.
+[11.12.2021 16:00:24] PickShips()-> ShipCount 3.
+[11.12.2021 16:00:24] PickShips()-> Add cell to the current Ship: .
+[11.12.2021 16:00:24] SetRoute()-> 0 2.
+[11.12.2021 16:00:24] ConstructShip()-> 3 Size Threecell.
+[11.12.2021 16:00:24] randomCell()-> i: 6 j: 1 Locactivity: 0.
+[11.12.2021 16:00:24] randomCell()-> i: 4 j: 1 Locactivity: 0.
+[11.12.2021 16:00:24] PickShips()-> Add new Ship:  i: 4 j: 1.
+[11.12.2021 16:00:24] PickShips()-> ShipCount 4.
+[11.12.2021 16:00:24] PickShips()-> Add cell to the current Ship: .
+[11.12.2021 16:00:24] randomCell()-> i: 7 j: 7 Locactivity: 0.
+[11.12.2021 16:00:24] randomCell()-> i: 6 j: 5 Locactivity: 0.
+[11.12.2021 16:00:24] randomCell()-> i: 8 j: 9 Locactivity: 0.
+[11.12.2021 16:00:24] PickShips()-> Add new Ship:  i: 8 j: 9.
+[11.12.2021 16:00:24] PickShips()-> ShipCount 5.
+[11.12.2021 16:00:24] PickShips()-> Add cell to the current Ship: .
+[11.12.2021 16:00:24] randomCell()-> i: 9 j: 8 Locactivity: 0.
+[11.12.2021 16:00:24] randomCell()-> i: 2 j: 8 Locactivity: 0.
+[11.12.2021 16:00:24] PickShips()-> Add new Ship:  i: 2 j: 8.
+[11.12.2021 16:00:24] PickShips()-> ShipCount 6.
+[11.12.2021 16:00:24] PickShips()-> Add cell to the current Ship: .
+[11.12.2021 16:00:24] randomCell()-> i: 6 j: 1 Locactivity: 0.
+[11.12.2021 16:00:24] randomCell()-> i: 5 j: 1 Locactivity: 0.
+[11.12.2021 16:00:24] randomCell()-> i: 6 j: 0 Locactivity: 0.
+[11.12.2021 16:00:24] randomCell()-> i: 2 j: 6 Locactivity: 0.
+[11.12.2021 16:00:24] randomCell()-> i: 4 j: 0 Locactivity: 0.
+[11.12.2021 16:00:24] randomCell()-> i: 5 j: 4 Locactivity: 0.
+[11.12.2021 16:00:24] PickShips()-> Add new Ship:  i: 5 j: 4.
+[11.12.2021 16:00:24] PickShips()-> ShipCount 7.
+[11.12.2021 16:00:24] randomCell()-> i: 8 j: 9 Locactivity: 1.
+[11.12.2021 16:00:24] randomCell()-> i: 8 j: 9 Locactivity: 1.
+[11.12.2021 16:00:24] randomCell()-> i: 2 j: 2 Locactivity: 0.
+[11.12.2021 16:00:24] randomCell()-> i: 9 j: 2 Locactivity: 0.
+[11.12.2021 16:00:24] PickShips()-> Add new Ship:  i: 9 j: 2.
+[11.12.2021 16:00:24] PickShips()-> ShipCount 8.
+[11.12.2021 16:00:24] randomCell()-> i: 6 j: 3 Locactivity: 0.
+[11.12.2021 16:00:24] randomCell()-> i: 8 j: 0 Locactivity: 0.
+[11.12.2021 16:00:24] randomCell()-> i: 9 j: 4 Locactivity: 0.
+[11.12.2021 16:00:24] PickShips()-> Add new Ship:  i: 9 j: 4.
+[11.12.2021 16:00:24] PickShips()-> ShipCount 9.
+[11.12.2021 16:00:24] randomCell()-> i: 3 j: 1 Locactivity: 1.
+[11.12.2021 16:00:24] randomCell()-> i: 2 j: 4 Locactivity: 0.
+[11.12.2021 16:00:24] PickShips()-> Add new Ship:  i: 2 j: 4.
+[11.12.2021 16:00:24] PickShips()-> ShipCount 10.
