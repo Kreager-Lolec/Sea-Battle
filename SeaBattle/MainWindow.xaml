@@ -64,35 +64,13 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Button Content="Start"  Click="Start" HorizontalAlignment="Left" Grid.Column="0" Grid.Row="1" Width="70"/>
-            <Button Content="Clear your field"  Click="ClearYourField" HorizontalAlignment="Left"  Grid.Column="2" Grid.Row="1" />
-            <Button Content="Delete the ship" Click="DeleteMode" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left"  />
-            <Button Content="Reset the timer" Click="ResetTimer" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Left"/>
+            <Button Content="Start"  Click="Start" Grid.Column="0" Grid.Row="1" Width="70"/>
+            <Button Content="Clear your field"  Click="ClearYourField"  Grid.Column="2" Grid.Row="1" />
+            <Button Content="Delete the ship" Click="DeleteMode" Grid.Column="1" Grid.Row="1"  />
+            <!--<Button Content="Reset the timer" Click="ResetTimer" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Left"/>-->
             <Button Content="Restart the game" Click="RestartGame" Grid.Column="2" Grid.Row="3" Grid.ColumnSpan="2" HorizontalAlignment="Left"/>
-            <!--<Button Content="PickEnemyButtons" Click="Button_Click" Grid.Column="3" Grid.Row="2" />-->
+            <!--<Button Content="Fill Enemy F." Click="FillEnemyField" Grid.Column="1" Grid.Row="3" />-->
+            <Button Content="Random Fill" Click="RandomFill" Grid.Column="0" Grid.Row="3" />
         </Grid>
     </Grid>
-
-    <!--<WrapPanel Name="Layout"  Orientation="Horizontal" Width="700" Height="650" Margin="34,0,34.8,-19.8">
-        <WrapPanel x:Name="Map" Margin="0,0,334,239.2" Width="330" Height="434">
-            <Label Content="                     Your Map" Height="35" Width="331" FontSize="20" Background="Bisque"/>
-        </WrapPanel>
-        <WrapPanel x:Name="Shipmap" Margin="-320,0,0,239.2" Width="330" Height="434">
-            <Label Content="                Available Ships" Height="35" Width="331" FontSize="20" Background="Bisque"/>
-        </WrapPanel>
-        <WrapPanel x:Name ="EnemyMap" Width="330" Margin="-320,0,0,239.2" Height="434" Visibility="Hidden">
-            
-    <InkCanvas>
-                <Image Source="resourse\prukol.jpg"  Width="330" Height="434"  />
-            </InkCanvas>
-    
-            <Label Content="                     Enemy Map" Height="35" Width="331" FontSize="20" Background="Bisque"/>
-        </WrapPanel>
-        <Button Content="Start" Width="75" Height="32" Margin="0,-400,0,100" Click="Start"/>
-        <Button Content="Clear Field" Width="75" Height="32" Margin="20,-400,0,100" Click="ClearField"/>
-        <Button Content="Delete Ship" Width="75" Height="32" Margin="20,-400,0,100" Click="DeleteMode"/>
-        <ListBox Height="100" Width="100" RenderTransformOrigin="0.947,-1.714"/>
-        <WrapPanel Name="ButtonMap" Height="32" Width="150"  Margin="-200,-320,0,100">
-        </WrapPanel>
-    </WrapPanel>-->
 </Window>
