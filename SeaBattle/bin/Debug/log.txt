@@ -1,8 +1,11 @@
-[15.12.2021 19:07:54] PickUserShip()-> L.row: -1 L.cell: -1.
-[15.12.2021 19:07:54] PickUserShip()-> AfterL.row: 8 AfterL.cell: 9.
-[15.12.2021 19:07:57] PickUserShip()-> L.row: -1 L.cell: -1.
-[15.12.2021 19:07:57] PickUserShip()-> AfterL.row: 2 AfterL.cell: 8.
-[15.12.2021 19:07:59] PickUserShip()-> L.row: -1 L.cell: -1.
-[15.12.2021 19:07:59] PickUserShip()-> AfterL.row: 1 AfterL.cell: 5.
-[15.12.2021 19:08:02] PickUserShip()-> L.row: -1 L.cell: -1.
-[15.12.2021 19:08:02] PickUserShip()-> AfterL.row: 2 AfterL.cell: 4.
+[23.12.2021 12:49:28] Tick()-> 01.
+[23.12.2021 12:49:29] Tick()-> 01.
+[23.12.2021 12:49:30] Tick()-> 02.
+[23.12.2021 12:49:31] Tick()-> 03.
+[23.12.2021 12:49:32] StopTimerBot()-> StopBot!.
+[23.12.2021 12:49:32] StopTimer()-> StopTimerUser!.
+[23.12.2021 12:49:32] StopTimer()-> 00:00.
+[23.12.2021 12:49:32] ->  wins: 1.
+[23.12.2021 12:49:34] StopTimerBot()-> StopBot!.
+[23.12.2021 12:49:34] StopTimer()-> StopTimerUser!.
+[23.12.2021 12:49:34] StopTimer()-> 00:00.

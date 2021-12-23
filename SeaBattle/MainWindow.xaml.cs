@@ -32,11 +32,12 @@ namespace SeaBattle
         static public Brush defaultCellColor = Brushes.LightGray;
         static public Brush usedCellColor = Brushes.DarkGray;
         static public Brush destroyedCellColor = Brushes.Red;
+        static public Brush destroyedShipColor = Brushes.DarkRed;
         static public Brush deactivateCellColor = Brushes.DarkGray;
         static public Brush brokenCellColor = Brushes.Red;
         static public bool displayContent = true;
-        static public bool debug = false;
-        static public bool debugEnemyField = false;
+        static public bool debug = true;
+        static public bool debugEnemyField = true;
         static public int win = -1; //0 - bot wins; 1 - user wins
         static DispatcherTimer dt = new DispatcherTimer();
         static DispatcherTimer botTimer = new DispatcherTimer();
@@ -50,6 +51,10 @@ namespace SeaBattle
         static Label LeftSign = new Label();
         static Label RightSign = new Label();
         static bool RestartTheGame = false;
+        static public int countWinsBot = 0;
+        static public int countWinsUser = 0;
+        static public string nameUser = "";
+        static TextBox NameUser = new TextBox();
         /// <summary>
         /// Method, which write information to the log
         /// </summary>
@@ -334,6 +339,29 @@ namespace SeaBattle
                 }
                 return null;
             }
+            public bool IfNotFullDestroyShip(int i, int j)
+            {
+                if (DoesExistShip(i, j))
+                {
+                    int counter = 0;
+                    foreach (var loc in GetShip(i, j).locations)
+                    {
+                        if (loc.shipCellState == 0)
+                        {
+                            counter++;
+                        }
+                    }
+                    if (counter == GetShip(i, j).locations.Count || counter == 0)
+                    {
+                        return false;
+                    }
+                    else if (counter > 0 && counter < GetShip(i, j).locations.Count)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
             public bool IfDestroyedOneCelloFShip(Ship s)
             {
                 int destroyedCell = 0;
@@ -375,6 +403,7 @@ namespace SeaBattle
                     {
                         foreach (var l in s.locations)
                         {
+                            buttons[l.row][l.cell].Background = destroyedShipColor;
                             FillDestroyedShipArea(l);
                         }
                     }
@@ -388,7 +417,7 @@ namespace SeaBattle
                     {
                         break;
                     }
-                    else if (buttons[i + 1][l.cell].Background == destroyedCellColor)
+                    else if (buttons[i + 1][l.cell].Background == destroyedCellColor || buttons[i + 1][l.cell].Background == destroyedShipColor)
                     {
                         break;
                     }
@@ -404,7 +433,7 @@ namespace SeaBattle
                     {
                         break;
                     }
-                    else if (buttons[i - 1][l.cell].Background == destroyedCellColor)
+                    else if (buttons[i - 1][l.cell].Background == destroyedCellColor || buttons[i - 1][l.cell].Background == destroyedShipColor)
                     {
                         break;
                     }
@@ -420,7 +449,7 @@ namespace SeaBattle
                     {
                         break;
                     }
-                    else if (buttons[l.row][j + 1].Background == destroyedCellColor)
+                    else if (buttons[l.row][j + 1].Background == destroyedCellColor || buttons[l.row][j + 1].Background == destroyedShipColor)
                     {
                         break;
                     }
@@ -436,7 +465,7 @@ namespace SeaBattle
                     {
                         break;
                     }
-                    else if (buttons[l.row][j - 1].Background == destroyedCellColor)
+                    else if (buttons[l.row][j - 1].Background == destroyedCellColor || buttons[l.row][j - 1].Background == destroyedShipColor)
                     {
                         break;
                     }
@@ -510,17 +539,22 @@ namespace SeaBattle
             public void resetField()
             {
                 ships.Clear();
-                //MessageBox.Show(ships.Count.ToString());
                 fourcellship = 0;
                 threeCellships = 0;
                 twoCellShips = 0;
                 oneCellShips = 0;
+                shipsCount = 0;
                 checkAllShip();
                 for (int i = 0; i < LocationsActivity().Length; i++)
                 {
                     for (int j = 0; j < LocationsActivity()[i].Length; j++)
                     {
                         LocationsActivity()[i][j] = 0;
+                        if (debug)
+                        {
+                            buttons[i][j].Content = "0";
+                        }
+                        buttons[i][j].Background = defaultCellColor;
                     }
                 }
             }
@@ -576,10 +610,11 @@ namespace SeaBattle
                     int j = -1;
                     int route = -1;
                     int countiteration = 0;
-                    //WriteToLog("New Pick ", new StackTrace());
-                    //WriteToLog("----------------------------------------------------------------------------------------------------", new StackTrace());
+                    bool breakOperand = false;
                     do
                     {
+                        i = -1;
+                        j = -1;
                         countiteration = 0;
                         do
                         {
@@ -589,10 +624,15 @@ namespace SeaBattle
                             {
                                 enemyField.resetField();
                                 enemyField.PickShips();
+                                breakOperand = true;
                                 break;
                             }
                         } while (!CheckNearbyShip(new Location(i, j), LocationsActivity()) || !CheckDiagonalCell(new Location(i, j), LocationsActivity()));
-                        if (ships.Count < 10)
+                        if (breakOperand)
+                        {
+                            break;
+                        }
+                        if (DoesNotExistAllTypesOfShips())
                         {
                             AddNewship(i, j);
                             //WriteToLog("Add new Ship: " + " i: " + i.ToString() + " j: " + j.ToString(), new StackTrace());
@@ -605,18 +645,15 @@ namespace SeaBattle
                             {
                                 CheckAllShipBot();
                             }
-                            if (ships.Count >= 10)
-                            {
-                                break;
-                            }
+                            //WriteToLog("AfterShipCount " + ships.Count, new StackTrace());
                         }
                         if (i != -1 && j != -1)
                         {
+                            int defaultRow = i;
+                            int defaultCell = j;
                             if (fourcellship < 1 || twoCellShips < 3 || threeCellships < 2)
                             {
                                 //WriteToLog("Add cell to the current Ship: ", new StackTrace());
-                                int defaultRow = i;
-                                int defaultCell = j;
                                 randomRoute(GetCell(GetShip(defaultRow, defaultCell)), ref i, ref j, ref route);
                                 if (i == -1 && j == -1)
                                 {
@@ -624,11 +661,12 @@ namespace SeaBattle
                                 }
                                 //WriteToLog(defaultRow.ToString() + " " + defaultCell.ToString(), new StackTrace());
                                 ConstructShip(GetShip(defaultRow, defaultCell), i, j, route);
-                                if (GetShip(defaultRow, defaultCell).destroyedShip)
-                                {
-                                    ships.Remove(GetShip(defaultRow, defaultCell));
-                                    continue;
-                                }
+                                //WriteToLog("AddI: " + i + " AddJ: " + j, new StackTrace());
+                            }
+                            if (GetShip(defaultRow, defaultCell).brokenShip)
+                            {
+                                ships.Remove(GetShip(defaultRow, defaultCell));
+                                //WriteToLog("Remove: " + " i: " + defaultRow.ToString() + " j: " + defaultCell.ToString() + " LOC.ACTIVITY:" + LocationsActivity()[defaultRow][defaultCell] + " DoesExistsShip: " + DoesExistShip(defaultRow, defaultCell), new StackTrace());
                             }
                         }
                     } while (DoesNotExistAllTypesOfShips());
@@ -656,10 +694,10 @@ namespace SeaBattle
                     }
                     if (!succesufulOpetation)
                     {
-                        s.destroyedShip = true;
+                        s.brokenShip = true;
                     }
                     succesufulOpetation = false;
-                    if (fourcellship == 0 && !s.destroyedShip)
+                    if (fourcellship == 0 && !s.brokenShip)
                     {
                         do
                         {
@@ -676,9 +714,9 @@ namespace SeaBattle
                             }
                             else
                             {
-                                s.destroyedShip = true;
+                                s.brokenShip = true;
                             }
-                        } while (s.CountCells() < 4 && !s.destroyedShip);
+                        } while (s.CountCells() < 4 && !s.brokenShip);
                     }
                     else if (threeCellships >= 0 && threeCellships < 2 && !s.destroyedShip)
                     {
@@ -698,9 +736,9 @@ namespace SeaBattle
                             }
                             else
                             {
-                                s.destroyedShip = true;
+                                s.brokenShip = true;
                             }
-                        } while (s.CountCells() < 3 && !s.destroyedShip); ;
+                        } while (s.CountCells() < 3 && !s.brokenShip);
                     }
                 }
                 catch (Exception ex)
@@ -1643,7 +1681,8 @@ namespace SeaBattle
                 int TCS = 0;
                 int THCS = 0;
                 int FCS = 0;
-                if (sessionnumber == 0 || RestartTheGame)
+                //WriteToLog(" SessionNumber: " + sessionnumber + " RestartTheGame: " + RestartTheGame, new StackTrace());
+                if (sessionnumber == 0 || RestartTheGame || debugEnemyField)
                 {
                     for (int i = 0; i < buttons.Length; i++)
                     {
@@ -1651,6 +1690,7 @@ namespace SeaBattle
                         {
                             if (DoesExistShip(i, j))
                             {
+                                //WriteToLog(" ExistsI: " + i + " ExistsJ: " + j, new StackTrace());
                                 continue;
                             }
                             else
@@ -1788,36 +1828,43 @@ namespace SeaBattle
                 {
                     i = -1;
                     j = -1;
+                    WriteToLog("-----------------------------------", new StackTrace());
                     WriteToLog("Info about ship: " + " row: " + s.locations[k].row + " cell: " + s.locations[k].cell, new StackTrace());
                     WriteToLog(" Info: " + s.locations[k].shipCellState + " Iteration: " + k + " Size: " + s.locations.Count, new StackTrace());
                     if (s.locations.Count > 1 && s.locations.Count < 3)
                     {
-                        if (k == 0 && s.locations[k].shipCellState == 0 && s.locations[k + 1].shipCellState == 1)
+                        if (k == 0)
                         {
+                            if (s.locations[k].shipCellState == 0 && s.locations[k + 1].shipCellState == 1)
+                            {
+                                randomRoute(s.locations[k], ref i, ref j, ref countUsedRoute);
+                            }
                             //MessageBox.Show("Da1");
-                            randomRoute(s.locations[k], ref i, ref j, ref countUsedRoute);
                             if (countUsedRoute == 4)
                             {
                                 //WriteToLog("CountUsedRoute: " + countUsedRoute + " Size: " + s.locations.Count, new StackTrace());
                                 continue;
                             }
-                            else if (i != -1 && j != -1)
+                            if (i != -1 && j != -1)
                             {
                                 firstI = i;
                                 firstJ = j;
                                 randomWay1++;
                             }
                         }
-                        else if (k == 1 && s.locations[k].shipCellState == 0 && s.locations[k - 1].shipCellState == 1)
+                        else if (k == 1)
                         {
+                            if (s.locations[k].shipCellState == 0 && s.locations[k - 1].shipCellState == 1)
+                            {
+                                randomRoute(s.locations[k], ref i, ref j, ref countUsedRoute);
+                            }
                             //MessageBox.Show("Da2");
-                            randomRoute(s.locations[k], ref i, ref j, ref countUsedRoute);
                             if (countUsedRoute == 4)
                             {
                                 //WriteToLog("CountUsedRoute: " + countUsedRoute + " Size: " + s.locations.Count, new StackTrace());
                                 continue;
                             }
-                            else if (i != -1 && j != -1)
+                            if (i != -1 && j != -1)
                             {
                                 secondI = i;
                                 secondJ = j;
@@ -1845,7 +1892,7 @@ namespace SeaBattle
                             {
                                 continue;
                             }
-                            else if (s.locations[k].shipCellState == 0 && s.locations[k + 1].shipCellState == 1)
+                            else if (s.locations[k].shipCellState == 0 && s.locations[k + 1].shipCellState == 1 && s.locations[k + 2].shipCellState == 1)
                             {
                                 randomRoute(s.locations[k], ref i, ref j, ref countUsedRoute);
                             }
@@ -1896,7 +1943,7 @@ namespace SeaBattle
                                 //WriteToLog("2.CountUsedRoute: " + countUsedRoute + " Size: " + s.locations.Count, new StackTrace());
                                 continue;
                             }
-                            else if (i != -1 && j != -1)
+                            if (i != -1 && j != -1)
                             {
                                 secondI = i;
                                 secondJ = j;
@@ -1906,7 +1953,7 @@ namespace SeaBattle
                         else if (k == 2)
                         {
                             //WriteToLog("3.TwoCellDeactivate " + RouteIfTwoCellDeactivated, new StackTrace());
-                            if (RouteIfTwoCellDeactivated)
+                            if (RouteIfTwoCellDeactivated && s.locations[k - 1].shipCellState == 0)
                             {
                                 if (s.VerticalShip)
                                 {
@@ -1918,7 +1965,7 @@ namespace SeaBattle
                                 }
                                 RouteIfTwoCellDeactivated = false;
                             }
-                            else if (s.locations[k].shipCellState == 0 && s.locations[k - 1].shipCellState == 1)
+                            else if (s.locations[k].shipCellState == 0 && s.locations[k - 1].shipCellState == 1 && s.locations[k - 2].shipCellState == 1)
                             {
                                 randomRoute(s.locations[k], ref i, ref j, ref countUsedRoute);
                             }
@@ -1927,7 +1974,7 @@ namespace SeaBattle
                                 //WriteToLog("3.CountUsedRoute: " + countUsedRoute + " Size: " + s.locations.Count, new StackTrace());
                                 continue;
                             }
-                            else if (i != -1 && j != -1)
+                            if (i != -1 && j != -1)
                             {
                                 thirdI = i;
                                 thirdJ = j;
@@ -1963,7 +2010,7 @@ namespace SeaBattle
                                 }
                                 RouteIfThreeCellDeactivated = true;
                             }
-                            else if (s.locations[k].shipCellState == 0 && s.locations[k + 1].shipCellState == 1)
+                            else if (s.locations[k].shipCellState == 0 && s.locations[k + 1].shipCellState == 1 && s.locations[k + 2].shipCellState == 1 && s.locations[k + 3].shipCellState == 1)
                             {
                                 randomRoute(s.locations[k], ref i, ref j, ref countUsedRoute);
                             }
@@ -1972,7 +2019,7 @@ namespace SeaBattle
                                 //WriteToLog("CountUsedRoute: " + countUsedRoute + " Size: " + s.locations.Count, new StackTrace());
                                 continue;
                             }
-                            else if (i != -1 && j != -1)
+                            if (i != -1 && j != -1)
                             {
                                 firstI = i;
                                 firstJ = j;
@@ -2033,7 +2080,7 @@ namespace SeaBattle
                                 //WriteToLog("CountUsedRoute: " + countUsedRoute + " Size: " + s.locations.Count, new StackTrace());
                                 continue;
                             }
-                            else if (i != -1 && j != -1)
+                            if (i != -1 && j != -1)
                             {
                                 secondI = i;
                                 secondJ = j;
@@ -2042,7 +2089,7 @@ namespace SeaBattle
                         }
                         else if (k == 2)
                         {
-                            if (RouteIfTwoCellDeactivated && s.locations[k - 1].shipCellState == 0 && s.locations[k - 2].shipCellState == 1 && s.locations[k + 1].shipCellState == 1)
+                            if (RouteIfTwoCellDeactivated && s.locations[k - 1].shipCellState == 0 && s.locations[k - 2].shipCellState == 1 && s.locations[k + 1].shipCellState == 1 && s.locations[k].shipCellState == 0)
                             {
                                 if (s.VerticalShip)
                                 {
@@ -2091,7 +2138,7 @@ namespace SeaBattle
                                 //WriteToLog("CountUsedRoute: " + countUsedRoute + " Size: " + s.locations.Count, new StackTrace());
                                 continue;
                             }
-                            else if (i != -1 && j != -1)
+                            if (i != -1 && j != -1)
                             {
                                 thirdI = i;
                                 thirdJ = j;
@@ -2124,7 +2171,7 @@ namespace SeaBattle
                                 }
                                 RouteIfThreeCellDeactivated = false;
                             }
-                            else if (s.locations[k].shipCellState == 0 && s.locations[k - 1].shipCellState == 1)
+                            else if (s.locations[k].shipCellState == 0 && s.locations[k - 1].shipCellState == 1 && s.locations[k - 2].shipCellState == 1 && s.locations[k - 3].shipCellState == 1)
                             {
                                 randomRoute(s.locations[k], ref i, ref j, ref countUsedRoute);
                             }
@@ -2133,7 +2180,7 @@ namespace SeaBattle
                                 //WriteToLog("CountUsedRoute: " + countUsedRoute + " Size: " + s.locations.Count, new StackTrace());
                                 continue;
                             }
-                            else if (i != -1 && j != -1)
+                            if (i != -1 && j != -1)
                             {
                                 forthI = i;
                                 forthJ = j;
@@ -2142,12 +2189,12 @@ namespace SeaBattle
                         }
                     }
                 }
-                WriteToLog("---------------------------------------------------------------------------------------------------------------", new StackTrace());
-                WriteToLog("Random Route: " + randomWay + " Row: " + i.ToString() + " Cell: " + j.ToString() + " Size: " + s.locations.Count, new StackTrace());
-                WriteToLog("Random Route: " + randomWay1 + " Row: " + firstI.ToString() + " Cell: " + firstJ.ToString() + " Size: " + s.locations.Count, new StackTrace());
-                WriteToLog("Random Route: " + randomWay2 + " Row: " + secondI.ToString() + " Cell: " + secondJ.ToString() + " Size: " + s.locations.Count, new StackTrace());
-                WriteToLog("Random Route: " + randomWay3 + " Row: " + thirdI.ToString() + " Cell: " + thirdJ.ToString() + " Size: " + s.locations.Count, new StackTrace());
-                WriteToLog("Random Route: " + randomWay4 + " Row: " + forthI.ToString() + " Cell: " + forthJ.ToString() + " Size: " + s.locations.Count, new StackTrace());
+                //WriteToLog("---------------------------------------------------------------------------------------------------------------", new StackTrace());
+                //WriteToLog("Random Route: " + randomWay + " Row: " + i.ToString() + " Cell: " + j.ToString() + " Size: " + s.locations.Count, new StackTrace());
+                //WriteToLog("Random Route: " + randomWay1 + " Row: " + firstI.ToString() + " Cell: " + firstJ.ToString() + " Size: " + s.locations.Count, new StackTrace());
+                //WriteToLog("Random Route: " + randomWay2 + " Row: " + secondI.ToString() + " Cell: " + secondJ.ToString() + " Size: " + s.locations.Count, new StackTrace());
+                //WriteToLog("Random Route: " + randomWay3 + " Row: " + thirdI.ToString() + " Cell: " + thirdJ.ToString() + " Size: " + s.locations.Count, new StackTrace());
+                //WriteToLog("Random Route: " + randomWay4 + " Row: " + forthI.ToString() + " Cell: " + forthJ.ToString() + " Size: " + s.locations.Count, new StackTrace());
                 do
                 {
                     randomWay = rnd.Next(1, 5);
@@ -2176,7 +2223,7 @@ namespace SeaBattle
                         break;
                     }
                 } while (true);
-                WriteToLog("Random Route: " + randomWay + " PickedRow: " + i.ToString() + " PickedCell: " + j.ToString(), new StackTrace());
+                //WriteToLog("Random Route: " + randomWay + " PickedRow: " + i.ToString() + " PickedCell: " + j.ToString(), new StackTrace());
                 if (i == -1 && j == -1)
                 {
                     return null;
@@ -2190,57 +2237,67 @@ namespace SeaBattle
             {
                 try
                 {
-                    int i = -1;
-                    int j = -1;
-                    if (queueWay == 1 && win == -1)
+                    if (win == -1)
                     {
-                        if (sessionnumber == 1)
+                        int i = -1;
+                        int j = -1;
+                        if (queueWay == 1 && win == -1)
                         {
-                            i = -1;
-                            j = -1;
-                            Location l = new Location(i, j);
-                            WriteToLog("L.row: " + l.row + " L.cell: " + l.cell, new StackTrace());
-                            if (IfExistsDestroyedNotFullShip())
+                            if (sessionnumber == 1)
                             {
-                                l = DeactivateCellOfNotFullDestroyedShip(NotFullGetDestroyedShip());
+                                i = -1;
+                                j = -1;
+                                Location l = new Location(i, j);
+                                //WriteToLog("L.row: " + l.row + " L.cell: " + l.cell, new StackTrace());
+                                if (IfExistsDestroyedNotFullShip())
+                                {
+                                    //WriteToLog("RandomRoute " + l.row + " L.cell: " + l.cell, new StackTrace());
+                                    l = DeactivateCellOfNotFullDestroyedShip(NotFullGetDestroyedShip());
+                                }
+                                if (l.row == -1 && l.cell == -1)
+                                {
+                                    randomCell(ref i, ref j);
+                                    l.row = i;
+                                    l.cell = j;
+                                    //WriteToLog("Random " + l.row + " L.cell: " + l.cell, new StackTrace());
+                                }
+                                if (GetShip(l.row, l.cell) == null)
+                                {
+                                    oneMoreAttack = false;
+                                    LocationsActivity()[l.row][l.cell] = 2;
+                                    buttons[l.row][l.cell].Background = deactivateCellColor;
+                                }
+                                else
+                                {
+                                    oneMoreAttack = true;
+                                    DeactivateCellAndShip(l);
+                                    buttons[l.row][l.cell].Background = destroyedCellColor;
+                                    CheckDestroyedShipsArea();
+                                    if (GetCountDestroyedShips() >= 10)
+                                    {
+                                        oneMoreAttack = false;
+                                    }
+                                }
+                                //WriteToLog("AfterL.row: " + l.row + " AfterL.cell: " + l.cell, new StackTrace());
                             }
-                            if (l.row == -1 && l.cell == -1)
+                        }
+                        if (!oneMoreAttack)
+                        {
+                            if (GetCountDestroyedShips() >= 10)
                             {
-                                randomCell(ref i, ref j);
-                                l.row = i;
-                                l.cell = j;
-                            }
-                            WriteToLog("AfterL.row: " + l.row + " AfterL.cell: " + l.cell, new StackTrace());
-                            if (GetShip(l.row, l.cell) == null)
-                            {
-                                oneMoreAttack = false;
-                                LocationsActivity()[l.row][l.cell] = 2;
-                                buttons[l.row][l.cell].Background = deactivateCellColor;
+                                winBot();
                             }
                             else
                             {
-                                oneMoreAttack = true;
-                                DeactivateCellAndShip(l);
-                                buttons[l.row][l.cell].Background = destroyedCellColor;
-                                CheckDestroyedShipsArea();
+                                ReinitializeSigns();
+                                enemyField.queueWay = 1;
+                                queueWay = 0;
+                                StopTimerBot();
+                                StartTimer();
                             }
                         }
                     }
-                    if (!oneMoreAttack)
-                    {
-                        if (GetCountDestroyedShips() >= 10)
-                        {
-                            winBot();
-                        }
-                        else
-                        {
-                            ReinitializeSigns();
-                            enemyField.queueWay = 1;
-                            queueWay = 0;
-                            StopTimerBot();
-                            StartTimer();
-                        }
-                    }
+                    
                 }
                 catch (Exception ex)
                 {
@@ -2254,7 +2311,7 @@ namespace SeaBattle
                 {
                     i = rnd.Next(0, 10);
                     j = rnd.Next(0, 10);
-                } while (LocationsActivity()[i][j] == 2);
+                } while (LocationsActivity()[i][j] == 2 || IfNotFullDestroyShip(i, j));
             }
             private void randomRoute(Location l, ref int pickedRow, ref int pickedCell, ref int countUsedRoute, int neccesaryRoute = -1)
             {
@@ -2270,27 +2327,26 @@ namespace SeaBattle
                     //MessageBox.Show(" NC: " + neccesaryRoute);
                     do
                     {
+                        if (countUsedRoute >= 4)
+                        {
+                            break;
+                        }
                         if (neccesaryRoute == -1)
                         {
                             route = rnd.Next(1, 5);
+                            WriteToLog("NR: " + neccesaryRoute + " RandomOn: " + route + " CountUsedRoute: " + countUsedRoute);
                         }
                         else
                         {
                             route = neccesaryRoute;
                             countUsedRoute = 3;
+                            WriteToLog("NR: " + neccesaryRoute + " RandomOff: " + route + " CountUsedRoute: " + countUsedRoute);
                         }
                         if (route == 1 && !usedFirstRoute)
                         {
                             for (int i = l.row; i < LocationsActivity().Length; i++)
                             {
-                                if (i - l.row == 1)
-                                {
-                                    countUsedRoute++;
-                                    usedFirstRoute = true;
-                                    continueRandom = true;
-                                    break;
-                                }
-                                else if (i == 9)
+                                if (i == 9)
                                 {
                                     countUsedRoute++;
                                     usedFirstRoute = true;
@@ -2304,10 +2360,16 @@ namespace SeaBattle
                                 }
                                 else if (LocationsActivity()[i + 1][l.cell] == 1 || LocationsActivity()[i + 1][l.cell] == 0)
                                 {
-                                    //MessageBox.Show(LocationsActivity()[i + 1][l.cell].ToString());
+                                    WriteToLog("i+: " + LocationsActivity()[i + 1][l.cell].ToString() + " i: " + i, new StackTrace());
                                     pickedRow = i + 1;
                                     pickedCell = l.cell;
                                     continueRandom = false;
+                                    break;
+                                }
+                                if (i - l.row == 0)
+                                {
+                                    usedFirstRoute = true;
+                                    continueRandom = true;
                                     break;
                                 }
                             }
@@ -2316,14 +2378,7 @@ namespace SeaBattle
                         {
                             for (int i = l.row; i >= 0; i--)
                             {
-                                if (l.row - i == 1)
-                                {
-                                    countUsedRoute++;
-                                    usedSecondRoute = true;
-                                    continueRandom = true;
-                                    break;
-                                }
-                                else if (i == 0)
+                                if (i == 0)
                                 {
                                     countUsedRoute++;
                                     usedSecondRoute = true;
@@ -2337,10 +2392,16 @@ namespace SeaBattle
                                 }
                                 else if (LocationsActivity()[i - 1][l.cell] == 1 || LocationsActivity()[i - 1][l.cell] == 0)
                                 {
-                                    //MessageBox.Show(LocationsActivity()[i - 1][l.cell].ToString());
+                                    WriteToLog("i-: " + LocationsActivity()[i - 1][l.cell].ToString() + " i:" + i, new StackTrace());
                                     pickedRow = i - 1;
                                     pickedCell = l.cell;
                                     continueRandom = false;
+                                    break;
+                                }
+                                if (l.row - i == 0)
+                                {
+                                    usedSecondRoute = true;
+                                    continueRandom = true;
                                     break;
                                 }
                             }
@@ -2349,14 +2410,7 @@ namespace SeaBattle
                         {
                             for (int j = l.cell; j < LocationsActivity()[l.row].Length; j++)
                             {
-                                if (j - l.cell == 1)
-                                {
-                                    countUsedRoute++;
-                                    usedThirdRoute = true;
-                                    continueRandom = true;
-                                    break;
-                                }
-                                else if (j == 9)
+                                if (j == 9)
                                 {
                                     countUsedRoute++;
                                     usedThirdRoute = true;
@@ -2370,10 +2424,16 @@ namespace SeaBattle
                                 }
                                 else if (LocationsActivity()[l.row][j + 1] == 1 || LocationsActivity()[l.row][j + 1] == 0)
                                 {
-                                    //MessageBox.Show(LocationsActivity()[l.row][j + 1].ToString());
+                                    WriteToLog("j+: " + LocationsActivity()[l.row][j + 1].ToString() + " j: " + j, new StackTrace());
                                     pickedRow = l.row;
                                     pickedCell = j + 1;
                                     continueRandom = false;
+                                    break;
+                                }
+                                if (j - l.cell == 0)
+                                {
+                                    usedThirdRoute = true;
+                                    continueRandom = true;
                                     break;
                                 }
                             }
@@ -2382,14 +2442,7 @@ namespace SeaBattle
                         {
                             for (int j = l.cell; j >= 0; j--)
                             {
-                                if (l.cell - j == 1)
-                                {
-                                    countUsedRoute++;
-                                    usedForthRoute = true;
-                                    continueRandom = true;
-                                    break;
-                                }
-                                else if (j == 0)
+                                if (j == 0)
                                 {
                                     countUsedRoute++;
                                     usedForthRoute = true;
@@ -2403,16 +2456,22 @@ namespace SeaBattle
                                 }
                                 else if (LocationsActivity()[l.row][j - 1] == 1 || LocationsActivity()[l.row][j - 1] == 0)
                                 {
-                                    //MessageBox.Show(LocationsActivity()[l.row][j - 1].ToString());
+                                    WriteToLog("j-: " + LocationsActivity()[l.row][j - 1].ToString() + " j: " + j, new StackTrace());
                                     pickedRow = l.row;
                                     pickedCell = j - 1;
                                     continueRandom = false;
                                     break;
                                 }
+                                if (l.cell - j == 0)
+                                {
+                                    usedForthRoute = true;
+                                    continueRandom = true;
+                                    break;
+                                }
                             }
                         }
-                    } while (continueRandom && countUsedRoute < 4);
-                    WriteToLog("NR: " + neccesaryRoute + " Count: " + countUsedRoute + " PickedRow: " + pickedRow + " PickedCell: " + pickedCell);
+                    } while (continueRandom);
+                    WriteToLog(" PickedRow: " + pickedRow + " PickedCell: " + pickedCell);
                 }
                 catch (Exception ex)
                 {
@@ -2431,6 +2490,7 @@ namespace SeaBattle
                 {
                     bool breakOperand = false;
                     bool oneMoreAttack = true;
+                    bool doubleChooseButton = false;
                     if (queueWay == 1 && win == -1)
                     {
                         Button pressedButton = sender as Button;
@@ -2440,7 +2500,7 @@ namespace SeaBattle
                             {
                                 for (int j = 0; j < buttons[i].Length; j++)
                                 {
-                                    if (pressedButton == buttons[i][j])
+                                    if (pressedButton == buttons[i][j] && LocationsActivity()[i][j] != 2)
                                     {
                                         Location l = new Location(i, j);
                                         if (GetShip(l.row, l.cell) == null)
@@ -2457,6 +2517,13 @@ namespace SeaBattle
                                         breakOperand = true;
                                         break;
                                     }
+                                    else if (pressedButton == buttons[i][j])
+                                    {
+                                        MessageBox.Show("You has deactivated this cell, choose another one please");
+                                        doubleChooseButton = true;
+                                        breakOperand = true;
+                                        break;
+                                    }
                                 }
                                 if (breakOperand)
                                 {
@@ -2464,7 +2531,7 @@ namespace SeaBattle
                                 }
                             }
                         }
-                        if (!oneMoreAttack)
+                        if (!oneMoreAttack || GetCountDestroyedShips() >= 10)
                         {
                             if (GetCountDestroyedShips() >= 10)
                             {
@@ -2479,7 +2546,10 @@ namespace SeaBattle
                             }
                         }
                     }
-                    StartTimer();
+                    if (!doubleChooseButton && win == -1)
+                    {
+                        StartTimer();
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -2844,6 +2914,11 @@ namespace SeaBattle
                 EnemyMap.Children.Remove(fTimer);
                 Shipmap.Children.Add(fTimer);
             }
+        }
+        public void InitializeBlockForNameUser()
+        {
+            UserMap.Children.Add(NameUser);
+
         }
         public void Init()
         {
@@ -3224,17 +3299,32 @@ namespace SeaBattle
                 enemyField.resetField();
                 RestartTheGame = false;
                 availableShipField.resetField();
+                sessionnumber = 0;
+                userField.queueWay = 0;
+                enemyField.queueWay = 1;
                 availableShipField.ShowAvailableShip();
                 ReinitializeTimerBlock();
+                fTimer.Content = defaultValueTimer;
+                seconds = 0;
+                minutes = 0;
                 EnemyMap.Visibility = Visibility.Hidden;
                 Shipmap.Visibility = Visibility.Visible;
                 UserMap.Children.Remove(LeftSign);
                 EnemyMap.Children.Remove(RightSign);
-                StopTimerBot();
-                StopTimer();
+                win = -1;
                 LeftSign.Content = "=";
                 RightSign.Content = ">";
-                sessionnumber = 0;
+                for (int i = 0; i < userField.buttons.Length; i++)
+                {
+                    for (int j = 0; j < userField.buttons[i].Length; j++)
+                    {
+                        userField.buttons[i][j].Click += userField.AddShip;
+                        enemyField.buttons[i][j].Click += enemyField.AddShip;
+                        enemyField.buttons[i][j].Click -= enemyField.PickEnemyShip;
+                    }
+                }
+                StopTimerBot();
+                StopTimer();
                 MessageBox.Show("Game has been restarted succesfully");
             }
             else
@@ -3262,6 +3352,7 @@ namespace SeaBattle
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+
             dt.Interval = TimeSpan.FromSeconds(1);
             dt.Tick += Tick;
             botTimer.Interval = TimeSpan.FromSeconds(1);
@@ -3275,6 +3366,7 @@ namespace SeaBattle
             {
                 if (secondsForBot == limitSecondsForBot)
                 {
+                    WriteToLog(secondsForBot.ToString(), new StackTrace());
                     userField.PickUserShip();
                     secondsForBot = 0;
                     StartTimer();
@@ -3299,10 +3391,11 @@ namespace SeaBattle
             {
                 displaySeconds = seconds.ToString();
             }
+            WriteToLog(displaySeconds.ToString(), new StackTrace());
             fTimer.Content = "0" + minutes.ToString() + ":" + displaySeconds;
             if (fTimer.Content.ToString() == "01:30")
             {
-                MessageBox.Show("Your time for stroke has exhausted");
+                MessageBox.Show("Your time for stroke has ran out");
                 ReinitializeSigns();
                 userField.queueWay = 1;
                 enemyField.queueWay = 0;
@@ -3340,28 +3433,29 @@ namespace SeaBattle
         }
         public void ResetTimer(object sender, RoutedEventArgs e)
         {
-            if (seconds >= 5)
-            {
                 dt.Stop();
                 fTimer.Content = defaultValueTimer;
                 seconds = 0;
                 minutes = 0;
-                dt.Start();
-            }
+                //dt.Start();
         }
         static public void StopTimerBot()
         {
+            WriteToLog("StopBot!", new StackTrace());
             botTimer.Stop();
+            secondsForBot = 0;
         }
         static public void StartTimerBot()
         {
             secondsForBot = 0;
             botTimer.Start();
+            WriteToLog(secondsForBot.ToString(), new StackTrace());
         }
         static public void StopTimer()
         {
-            fTimer.Content = defaultValueTimer;
+            WriteToLog("StopTimerUser!", new StackTrace());
             dt.Stop();
+            WriteToLog(defaultValueTimer, new StackTrace());
         }
         static public void StartTimer()
         {
@@ -3390,6 +3484,7 @@ namespace SeaBattle
                             enemyField.buttons[i][j].Click += enemyField.PickEnemyShip;
                         }
                     }
+                    enemyField.resetField();
                     enemyField.PickShips();
                     CheckIdentityField();
                     InitializeSigns();
@@ -3406,10 +3501,14 @@ namespace SeaBattle
             if (sessionnumber == 1 && enemyField.GetCountDestroyedShips() == 10)
             {
                 win = 1;
+                sessionnumber++;
+                countWinsUser++;
+                RightSign.Content = "";
+                LeftSign.Content = "";
                 StopTimerBot();
                 StopTimer();
-                sessionnumber++;
-                MessageBox.Show("My congatulatons, you win!");
+                WriteToLog(nameUser + " wins: " + countWinsUser);
+                MessageBox.Show("My congratulations, you win!");
             }
         }
         static public void winBot()
@@ -3417,10 +3516,12 @@ namespace SeaBattle
             if (sessionnumber == 1 && userField.GetCountDestroyedShips() == 10)
             {
                 win = 0;
-                StopTimerBot();
-                StopTimer();
                 sessionnumber++;
                 enemyField.checkAllShip();
+                countWinsBot++;
+                StopTimerBot();
+                StopTimer();
+                WriteToLog(" Bot wins: " + countWinsBot);
                 MessageBox.Show("Oh sorry, you lose");
             }
         }
@@ -3514,7 +3615,7 @@ namespace SeaBattle
                     userField.resetField();
                     userField.PickShips();
                     availableShipField.countActiveCell();
-                    //CheckIdentityField();
+                    CheckIdentityField();
                 }
                 else
                 {

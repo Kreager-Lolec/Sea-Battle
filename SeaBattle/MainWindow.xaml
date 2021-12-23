@@ -67,7 +67,7 @@
             <Button Content="Start"  Click="Start" Grid.Column="0" Grid.Row="1" Width="70"/>
             <Button Content="Clear your field"  Click="ClearYourField"  Grid.Column="2" Grid.Row="1" />
             <Button Content="Delete the ship" Click="DeleteMode" Grid.Column="1" Grid.Row="1"  />
-            <!--<Button Content="Reset the timer" Click="ResetTimer" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Left"/>-->
+            <!--<Button Content="Reset the timer" Click="ResetTimer" Grid.Column="4" Grid.Row="3" HorizontalAlignment="Left"/>-->
             <Button Content="Restart the game" Click="RestartGame" Grid.Column="2" Grid.Row="3" Grid.ColumnSpan="2" HorizontalAlignment="Left"/>
             <!--<Button Content="Fill Enemy F." Click="FillEnemyField" Grid.Column="1" Grid.Row="3" />-->
             <Button Content="Random Fill" Click="RandomFill" Grid.Column="0" Grid.Row="3" />
