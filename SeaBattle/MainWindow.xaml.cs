@@ -7,6 +7,9 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Linq;
 using System.Windows.Threading;
+using System.Media;
+using System.Windows.Media.Imaging;
+using WpfAnimatedGif;
 
 namespace SeaBattle
 {
@@ -24,6 +27,8 @@ namespace SeaBattle
         static Button stopDM = new Button();
         const int mapsize = 11;
         string namecell = "ABCDEFGHIJ";
+        static Grid UserMap = new Grid();
+        static Grid EnemyMap = new Grid();
         static private string logPath = "log.txt";
         static public Brush fourCellColor = Brushes.Green;
         static public Brush threeCellColor = Brushes.Blue;
@@ -36,8 +41,8 @@ namespace SeaBattle
         static public Brush deactivateCellColor = Brushes.DarkGray;
         static public Brush brokenCellColor = Brushes.Red;
         static public bool displayContent = true;
-        static public bool debug = true;
-        static public bool debugEnemyField = true;
+        static public bool debug = false;
+        static public bool debugEnemyField = false;
         static public int win = -1; //0 - bot wins; 1 - user wins
         static DispatcherTimer dt = new DispatcherTimer();
         static DispatcherTimer botTimer = new DispatcherTimer();
@@ -55,6 +60,32 @@ namespace SeaBattle
         static public int countWinsUser = 0;
         static public string nameUser = "";
         static TextBox NameUser = new TextBox();
+        static public bool EasterEgg = false;
+        static bool memeMode = false;
+        static Image Gif1 = new Image();
+        static Image Gif2 = new Image();
+        static Image Gif3 = new Image();
+        static Image Gif4 = new Image();
+        static Image Gif5 = new Image();
+        static Image Gif6 = new Image();
+        static Label question = new Label();
+        static public Grid FunctionalMap = new Grid();
+        static public Button StartGame = new Button();
+        static public Button ClearField = new Button();
+        static public Button DeletingMode = new Button();
+        static public CheckBox Cheats = new CheckBox();
+        static public Button RestGame = new Button();
+        static public Button RandomizeField = new Button();
+        static public Button RandomizeEnemyField = new Button();
+        static public Grid EasterEggMap = new Grid();
+        static public RadioButton First = new RadioButton();
+        static public RadioButton Second = new RadioButton();
+        static public RadioButton Third = new RadioButton();
+        static public RadioButton Forth = new RadioButton();
+        static public bool Check1 = false;
+        static public bool Check2 = false;
+        static public bool Check3 = false;
+        static public bool Check4 = false;
         /// <summary>
         /// Method, which write information to the log
         /// </summary>
@@ -210,7 +241,7 @@ namespace SeaBattle
             }
             public bool OverFlowedCountOfShips()
             {
-                if (ships.Count > 10)
+                if (!DoesNotExistAllTypesOfShips())
                 {
                     return true;
                 }
@@ -264,8 +295,10 @@ namespace SeaBattle
             {
                 int destroyedCell = 0;
                 GetShip(l.row, l.cell).getCell(l.row, l.cell).shipCellState = 0;
+                WriteToLog("----------------");
                 foreach (var loc in GetShip(l.row, l.cell).locations)
                 {
+                    WriteToLog("LocState: " + loc.shipCellState, new StackTrace());
                     if (loc.shipCellState == 0)
                     {
                         destroyedCell++;
@@ -273,8 +306,17 @@ namespace SeaBattle
                 }
                 if (destroyedCell == GetShip(l.row, l.cell).locations.Count)
                 {
+                    if (userField.queueWay == 1)
+                    {
+                        MemeDestroySound();
+                    }
                     GetShip(l.row, l.cell).destroyedShip = true;
                 }
+            }
+            public void MemeDestroySound()
+            {
+                SoundPlayer splayer = new SoundPlayer(Properties.Resources.Demotivator);
+                splayer.Play();
             }
             public bool IfExistsDestroyedNotFullShip()
             {
@@ -980,6 +1022,7 @@ namespace SeaBattle
                                     }
                                     if (s2.CountCells() == 1 && oneCellShips >= 4)
                                     {
+
                                         s2.brokenShip = true;
                                     }
                                     else if (s2.CountCells() == 2 && twoCellShips >= 3)
@@ -1682,7 +1725,7 @@ namespace SeaBattle
                 int THCS = 0;
                 int FCS = 0;
                 //WriteToLog(" SessionNumber: " + sessionnumber + " RestartTheGame: " + RestartTheGame, new StackTrace());
-                if (sessionnumber == 0 || RestartTheGame || debugEnemyField)
+                if (sessionnumber == 0 || debugEnemyField || RestartTheGame)
                 {
                     for (int i = 0; i < buttons.Length; i++)
                     {
@@ -1690,10 +1733,9 @@ namespace SeaBattle
                         {
                             if (DoesExistShip(i, j))
                             {
-                                //WriteToLog(" ExistsI: " + i + " ExistsJ: " + j, new StackTrace());
                                 continue;
                             }
-                            else
+                            else if (sessionnumber != 2)
                             {
                                 if (debug)
                                 {
@@ -1829,7 +1871,7 @@ namespace SeaBattle
                     i = -1;
                     j = -1;
                     WriteToLog("-----------------------------------", new StackTrace());
-                    WriteToLog("Info about ship: " + " row: " + s.locations[k].row + " cell: " + s.locations[k].cell, new StackTrace());
+                    WriteToLog("Info about ship: " + " row: " + s.locations[k].row + " cell: " + s.locations[k].cell + " Vertical: " + s.VerticalShip + " Horyzontal: " + s.HorizotnalShip, new StackTrace());
                     WriteToLog(" Info: " + s.locations[k].shipCellState + " Iteration: " + k + " Size: " + s.locations.Count, new StackTrace());
                     if (s.locations.Count > 1 && s.locations.Count < 3)
                     {
@@ -2241,10 +2283,11 @@ namespace SeaBattle
                     {
                         int i = -1;
                         int j = -1;
-                        if (queueWay == 1 && win == -1)
+                        if (queueWay == 1)
                         {
                             if (sessionnumber == 1)
                             {
+                                SortShipsCoordinate();
                                 i = -1;
                                 j = -1;
                                 Location l = new Location(i, j);
@@ -2297,7 +2340,7 @@ namespace SeaBattle
                             }
                         }
                     }
-                    
+
                 }
                 catch (Exception ex)
                 {
@@ -2488,67 +2531,70 @@ namespace SeaBattle
             {
                 try
                 {
-                    bool breakOperand = false;
-                    bool oneMoreAttack = true;
-                    bool doubleChooseButton = false;
-                    if (queueWay == 1 && win == -1)
+                    if (win == -1)
                     {
-                        Button pressedButton = sender as Button;
-                        if (sessionnumber == 1)
+                        bool breakOperand = false;
+                        bool oneMoreAttack = true;
+                        bool doubleChooseButton = false;
+                        if (queueWay == 1)
                         {
-                            for (int i = 0; i < buttons.Length; i++)
+                            Button pressedButton = sender as Button;
+                            if (sessionnumber == 1)
                             {
-                                for (int j = 0; j < buttons[i].Length; j++)
+                                for (int i = 0; i < buttons.Length; i++)
                                 {
-                                    if (pressedButton == buttons[i][j] && LocationsActivity()[i][j] != 2)
+                                    for (int j = 0; j < buttons[i].Length; j++)
                                     {
-                                        Location l = new Location(i, j);
-                                        if (GetShip(l.row, l.cell) == null)
+                                        if (pressedButton == buttons[i][j] && LocationsActivity()[i][j] != 2)
                                         {
-                                            oneMoreAttack = false;
-                                            buttons[l.row][l.cell].Background = deactivateCellColor;
+                                            Location l = new Location(i, j);
+                                            if (GetShip(l.row, l.cell) == null)
+                                            {
+                                                oneMoreAttack = false;
+                                                buttons[l.row][l.cell].Background = deactivateCellColor;
+                                            }
+                                            else
+                                            {
+                                                DeactivateCellAndShip(l);
+                                                buttons[l.row][l.cell].Background = destroyedCellColor;
+                                                CheckDestroyedShipsArea();
+                                            }
+                                            breakOperand = true;
+                                            break;
                                         }
-                                        else
+                                        else if (pressedButton == buttons[i][j])
                                         {
-                                            DeactivateCellAndShip(l);
-                                            buttons[l.row][l.cell].Background = destroyedCellColor;
-                                            CheckDestroyedShipsArea();
+                                            MessageBox.Show("You has deactivated this cell, choose another one please");
+                                            doubleChooseButton = true;
+                                            breakOperand = true;
+                                            break;
                                         }
-                                        breakOperand = true;
-                                        break;
                                     }
-                                    else if (pressedButton == buttons[i][j])
+                                    if (breakOperand)
                                     {
-                                        MessageBox.Show("You has deactivated this cell, choose another one please");
-                                        doubleChooseButton = true;
-                                        breakOperand = true;
                                         break;
                                     }
                                 }
-                                if (breakOperand)
+                            }
+                            if (!oneMoreAttack || GetCountDestroyedShips() >= 10)
+                            {
+                                if (GetCountDestroyedShips() >= 10)
                                 {
-                                    break;
+                                    WinUser();
+                                }
+                                else
+                                {
+                                    ReinitializeSigns();
+                                    userField.queueWay = 1;
+                                    queueWay = 0;
+                                    StartTimerBot();
                                 }
                             }
                         }
-                        if (!oneMoreAttack || GetCountDestroyedShips() >= 10)
+                        if (!doubleChooseButton && win == -1)
                         {
-                            if (GetCountDestroyedShips() >= 10)
-                            {
-                                winUser();
-                            }
-                            else
-                            {
-                                ReinitializeSigns();
-                                userField.queueWay = 1;
-                                queueWay = 0;
-                                StartTimerBot();
-                            }
+                            StartTimer();
                         }
-                    }
-                    if (!doubleChooseButton && win == -1)
-                    {
-                        StartTimer();
                     }
                 }
                 catch (Exception ex)
@@ -2848,6 +2894,10 @@ namespace SeaBattle
             Grid.SetRow(UserLabel, 0);
             Grid.SetColumnSpan(UserLabel, 11);
         }
+        public void InitializeRadioButtons()
+        {
+
+        }
         public void InitializeTimerBlock()
         {
             lTimer.Content = "Timer: ";
@@ -2909,7 +2959,7 @@ namespace SeaBattle
                 Shipmap.Children.Remove(fTimer);
                 EnemyMap.Children.Add(fTimer);
             }
-            else if (EnemyMap.Children.Contains(fTimer))
+            else if (EnemyMap.Children.Contains(fTimer) && sessionnumber != 0)
             {
                 EnemyMap.Children.Remove(fTimer);
                 Shipmap.Children.Add(fTimer);
@@ -2918,14 +2968,253 @@ namespace SeaBattle
         public void InitializeBlockForNameUser()
         {
             UserMap.Children.Add(NameUser);
-
+        }
+        public void InitializeUserAndEnemyGridPanels()
+        {
+            GeneralMap.Children.Add(UserMap);
+            Grid.SetRow(UserMap, 0);
+            Grid.SetColumn(UserMap, 0);
+            Grid.SetRowSpan(UserMap, 3);
+            UserMap.RowDefinitions.Add(new RowDefinition());
+            UserMap.ColumnDefinitions.Add(new ColumnDefinition());
+            UserMap.ColumnDefinitions.Add(new ColumnDefinition());
+            Label UserLabel = new Label();
+            UserLabel.Content = "User Map";
+            UserLabel.FontSize = 20;
+            UserLabel.Background = Brushes.Bisque;
+            UserLabel.HorizontalContentAlignment = HorizontalAlignment.Center;
+            UserLabel.VerticalContentAlignment = VerticalAlignment.Center;
+            UserMap.Children.Add(UserLabel);
+            Grid.SetRow(UserLabel, 0);
+            Grid.SetColumn(UserLabel, 0);
+            Grid.SetColumnSpan(UserLabel, 11);
+            GeneralMap.Children.Add(EnemyMap);
+            EnemyMap.Visibility = Visibility.Hidden;
+            Grid.SetRow(EnemyMap, 0);
+            Grid.SetColumn(EnemyMap, 1);
+            Grid.SetRowSpan(EnemyMap, 3);
+            EnemyMap.RowDefinitions.Add(new RowDefinition());
+            EnemyMap.ColumnDefinitions.Add(new ColumnDefinition());
+            EnemyMap.ColumnDefinitions.Add(new ColumnDefinition());
+            Label EnemyLabel = new Label();
+            EnemyLabel.Content = "Enemy Map";
+            EnemyLabel.FontSize = 20;
+            EnemyLabel.Background = Brushes.Bisque;
+            EnemyLabel.HorizontalContentAlignment = HorizontalAlignment.Center;
+            EnemyLabel.VerticalContentAlignment = VerticalAlignment.Center;
+            EnemyMap.Children.Add(EnemyLabel);
+            Grid.SetRow(EnemyLabel, 0);
+            Grid.SetColumn(EnemyLabel, 2);
+            Grid.SetColumnSpan(EnemyLabel, 11);
+            GeneralMap.Children.Add(Gif1);
+            Grid.SetRow(Gif1, 1);
+            Grid.SetColumn(Gif1, 0);
+            Grid.SetColumnSpan(Gif1, 2);
+            GeneralMap.Children.Add(Gif2);
+            Grid.SetRow(Gif2, 1);
+            Grid.SetColumn(Gif2, 0);
+            Grid.SetColumnSpan(Gif2, 2);
+        }
+        public void InitQuestionAndRadionButtons()
+        {
+            try
+            {
+                EasterEggMap.Background = Brushes.BurlyWood;
+                EasterEggMap.Children.Add(question);
+                EasterEggMap.Children.Add(First);
+                EasterEggMap.Children.Add(Second);
+                EasterEggMap.Children.Add(Third);
+                EasterEggMap.Children.Add(Forth);
+                question.Content = "Коли я почав писать СІБАТЛ??";
+                Grid.SetRow(question, 0);
+                Grid.SetColumn(question, 0);
+                Grid.SetRow(First, 1);
+                Grid.SetColumn(First, 0);
+                Grid.SetRow(Second, 2);
+                Grid.SetColumn(Second, 0);
+                Grid.SetRow(Third, 3);
+                Grid.SetColumn(Third, 0);
+                Grid.SetRow(Forth, 4);
+                Grid.SetColumn(Forth, 0);
+                First.Click += Try1;
+                Second.Click += Try2;
+                Third.Click += Try3;
+                Forth.Click += Try4;
+                First.GroupName = "Try1";
+                Second.GroupName = "Try2";
+                Third.GroupName = "Try3";
+                Forth.GroupName = "Try4";
+                First.Content = "В травні";
+                Second.Content = "В червні";
+                Third.Content = "Сьогодні ахах";
+                Forth.Content = "Вчора нахуй";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message + "Jopa");
+            }
+        }
+        public void InitFunctionalMap()
+        {
+            GeneralMap.Children.Add(FunctionalMap);
+            Grid.SetRow(FunctionalMap, 4);
+            Grid.SetColumn(FunctionalMap, 0);
+            for (int i = 1; i <= 5; i++)
+            {
+                FunctionalMap.RowDefinitions.Add(new RowDefinition());
+            }
+            for (int i = 1; i <= 5; i++)
+            {
+                FunctionalMap.ColumnDefinitions.Add(new ColumnDefinition());
+            }
+            StartGame.Content = "Start";
+            StartGame.Click += Start;
+            Grid.SetRow(StartGame, 1);
+            Grid.SetColumn(StartGame, 0);
+            ClearField.Content = "Clear your field";
+            ClearField.Click += ClearYourField;
+            Grid.SetRow(ClearField, 1);
+            Grid.SetColumn(ClearField, 2);
+            DeletingMode.Content = "Delete the ship";
+            DeletingMode.Click += DeleteMode;
+            Grid.SetRow(DeletingMode, 1);
+            Grid.SetColumn(DeletingMode, 1);
+            Cheats.Content = "Танці з бубном 🥁";
+            Cheats.Click += ActivateDeActivateCheats;
+            Cheats.IsChecked = false;
+            if (EasterEgg)
+            {
+                Cheats.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                Cheats.Visibility = Visibility.Hidden;
+            }
+            Cheats.HorizontalAlignment = HorizontalAlignment.Center;
+            Cheats.VerticalAlignment = VerticalAlignment.Center;
+            Grid.SetRow(Cheats, 3);
+            Grid.SetColumn(Cheats, 3);
+            Grid.SetColumnSpan(Cheats, 2);
+            RestGame.Content = "Restart the game";
+            RestGame.Click += RestartGame;
+            Grid.SetRow(RestGame, 3);
+            Grid.SetColumn(RestGame, 0);
+            RandomizeField.Content = "Random Fill";
+            RandomizeField.Click += RandomFill;
+            Grid.SetRow(RandomizeField, 3);
+            Grid.SetColumn(RandomizeField, 1);
+            RandomizeEnemyField.Content = "Fill Enemy F.";
+            RandomizeEnemyField.Click += FillEnemyField;
+            Grid.SetRow(RandomizeEnemyField, 3);
+            Grid.SetColumn(RandomizeEnemyField, 2);
+            if (debug || debugEnemyField)
+            {
+                RandomizeEnemyField.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                RandomizeEnemyField.Visibility = Visibility.Hidden;
+            }
+            FunctionalMap.Children.Add(StartGame);
+            FunctionalMap.Children.Add(ClearField);
+            FunctionalMap.Children.Add(Cheats);
+            FunctionalMap.Children.Add(RestGame);
+            FunctionalMap.Children.Add(RandomizeField);
+            FunctionalMap.Children.Add(RandomizeEnemyField);
+            FunctionalMap.Children.Add(DeletingMode);
+        }
+        public void InitEasterEggMap()
+        {
+            EasterEggMap.Visibility = Visibility.Hidden;
+            Grid.SetRow(EasterEggMap, 1);
+            Grid.SetColumn(EasterEggMap, 0);
+            Grid.SetColumnSpan(EasterEggMap, 2);
+            EasterEggMap.HorizontalAlignment = HorizontalAlignment.Center;
+            GeneralMap.Children.Add(EasterEggMap);
+            for (int i = 0; i < 6; i++)
+            {
+                EasterEggMap.RowDefinitions.Add(new RowDefinition());
+            }
+            EasterEggMap.ColumnDefinitions.Add(new ColumnDefinition());
+            InitQuestionAndRadionButtons();
+        }
+        public void InitGif()
+        {
+            CheckVisibilityForGif();
+            var image1 = new BitmapImage();
+            image1.BeginInit();
+            image1.UriSource = new Uri(@"Resources\DemotivatorGif.gif", UriKind.Relative);
+            image1.EndInit();
+            ImageBehavior.SetAnimatedSource(Gif1, image1);
+            if (memeMode && !EasterEgg)
+            {
+                var image2 = new BitmapImage();
+                image2.BeginInit();
+                image2.UriSource = new Uri(@"Resources\GeraltWitcher.gif", UriKind.Relative);
+                image2.EndInit();
+                ImageBehavior.SetAnimatedSource(Gif2, image2);
+            }
+            //else if (EasterEgg)
+            //{
+                var image3 = new BitmapImage();
+                image3.BeginInit();
+                image3.UriSource = new Uri(@"Resources\Dmutro.gif", UriKind.Relative);
+                image3.EndInit();
+                ImageBehavior.SetAnimatedSource(Gif3, image3);
+                GeneralMap.Children.Add(Gif3);
+                var image4 = new BitmapImage();
+                image4.BeginInit();
+                image4.UriSource = new Uri(@"Resources\Sasha.gif", UriKind.Relative);
+                image4.EndInit();
+                ImageBehavior.SetAnimatedSource(Gif4, image4);
+                GeneralMap.Children.Add(Gif4);
+                var image5 = new BitmapImage();
+                image5.BeginInit();
+                image5.UriSource = new Uri(@"Resources\Mishanya.gif", UriKind.Relative);
+                image5.EndInit();
+                ImageBehavior.SetAnimatedSource(Gif5, image5);
+                GeneralMap.Children.Add(Gif5);
+                var Image6 = new BitmapImage();
+                Image6.BeginInit();
+                Image6.UriSource = new Uri(@"Resources\Baruk.gif", UriKind.Relative);
+                Image6.EndInit();
+                ImageBehavior.SetAnimatedSource(Gif6, Image6);
+                GeneralMap.Children.Add(Gif6);
+            //}
+            Grid.SetRow(Gif3, 0);
+            Grid.SetRowSpan(Gif3, 2);
+            Grid.SetColumn(Gif3, 0);
+            Gif3.HorizontalAlignment = HorizontalAlignment.Right;
+            Gif3.VerticalAlignment = VerticalAlignment.Center;
+            Grid.SetRow(Gif4, 0);
+            Grid.SetRowSpan(Gif4, 2);
+            Grid.SetColumn(Gif4, 1);
+            Gif4.HorizontalAlignment = HorizontalAlignment.Left;
+            Gif4.VerticalAlignment = VerticalAlignment.Center;
+            Grid.SetRow(Gif5, 2);
+            Grid.SetRowSpan(Gif5, 2);
+            Grid.SetColumn(Gif5, 0);
+            Gif5.HorizontalAlignment = HorizontalAlignment.Right;
+            Gif5.VerticalAlignment = VerticalAlignment.Center;
+            Grid.SetRow(Gif6, 2);
+            Grid.SetRowSpan(Gif6, 2);
+            Grid.SetColumn(Gif6, 1);
+            Gif6.HorizontalAlignment = HorizontalAlignment.Left;
+            Gif6.VerticalAlignment = VerticalAlignment.Center;
         }
         public void Init()
         {
+            InitializeUserAndEnemyGridPanels();
+            InitFunctionalMap();
             CreateMap();
             CreateStopDeleteButton();
             InitializeTimerBlock();
+            InitGif();
             availableShipField.ShowAvailableShip();
+            if (EasterEgg)
+            {
+                InitEasterEggMap();
+            }
         }
         /// <summary>
         /// This method deactivate deleting mode, and return color of the ships to the normal view
@@ -3098,7 +3387,6 @@ namespace SeaBattle
                         Grid.SetRow(availableShipField.buttons[i - 1][j - 1], i + 1);
                         Grid.SetColumn(availableShipField.buttons[i - 1][j - 1], j + 2);
                         availableShipField.buttons[i - 1][j - 1].Background = defaultCellColor;
-                        availableShipField.buttons[i - 1][j - 1].Click += availableShipField.AddShip;
                     }
                 }
             }
@@ -3294,12 +3582,13 @@ namespace SeaBattle
         {
             if (sessionnumber == 1 || sessionnumber == 2)
             {
+                ChangeVisibilityForMeme();
+                CheckVisibilityForGif();
                 RestartTheGame = true;
                 userField.resetField();
                 enemyField.resetField();
                 RestartTheGame = false;
                 availableShipField.resetField();
-                sessionnumber = 0;
                 userField.queueWay = 0;
                 enemyField.queueWay = 1;
                 availableShipField.ShowAvailableShip();
@@ -3325,6 +3614,7 @@ namespace SeaBattle
                 }
                 StopTimerBot();
                 StopTimer();
+                sessionnumber = 0;
                 MessageBox.Show("Game has been restarted succesfully");
             }
             else
@@ -3366,10 +3656,12 @@ namespace SeaBattle
             {
                 if (secondsForBot == limitSecondsForBot)
                 {
-                    WriteToLog(secondsForBot.ToString(), new StackTrace());
                     userField.PickUserShip();
                     secondsForBot = 0;
-                    StartTimer();
+                    if (win == -1)
+                    {
+                        StartTimer();
+                    }
                 }
             }
         }
@@ -3431,19 +3723,32 @@ namespace SeaBattle
             }
             return true;
         }
-        public void ResetTimer(object sender, RoutedEventArgs e)
+        public void ActivateDeActivateCheats(object sender, RoutedEventArgs e)
         {
-                dt.Stop();
-                fTimer.Content = defaultValueTimer;
-                seconds = 0;
-                minutes = 0;
-                //dt.Start();
-        }
-        static public void StopTimerBot()
-        {
-            WriteToLog("StopBot!", new StackTrace());
-            botTimer.Stop();
-            secondsForBot = 0;
+            CheckBox button = sender as CheckBox;
+            if (button.IsChecked == true && sessionnumber == 0)
+            {
+                debugEnemyField = true;
+                RandomizeEnemyField.Visibility = Visibility.Visible;
+                enemyField.checkAllShip();
+            }
+            else if (button.IsChecked == false)
+            {
+                debugEnemyField = false;
+                RandomizeEnemyField.Visibility = Visibility.Hidden;
+                for (int i = 0; i < enemyField.buttons.Length; i++)
+                {
+                    for (int j = 0; j < enemyField.buttons[i].Length; j++)
+                    {
+                        enemyField.buttons[i][j].Background = defaultCellColor;
+                    }
+                }
+            }
+            else if (sessionnumber == 1 || sessionnumber == 2)
+            {
+                MessageBox.Show("If you want to use the cheats, restart the game");
+                button.IsChecked = false;
+            }
         }
         static public void StartTimerBot()
         {
@@ -3451,9 +3756,13 @@ namespace SeaBattle
             botTimer.Start();
             WriteToLog(secondsForBot.ToString(), new StackTrace());
         }
-        static public void StopTimer()
+        public static void StopTimerBot()
         {
-            WriteToLog("StopTimerUser!", new StackTrace());
+            secondsForBot = 0;
+            botTimer.Stop();
+        }
+        public static void StopTimer()
+        {
             dt.Stop();
             WriteToLog(defaultValueTimer, new StackTrace());
         }
@@ -3496,7 +3805,7 @@ namespace SeaBattle
                 MessageBox.Show("You have already started playing");
             }
         }
-        static public void winUser()
+        static public void WinUser()
         {
             if (sessionnumber == 1 && enemyField.GetCountDestroyedShips() == 10)
             {
@@ -3509,31 +3818,137 @@ namespace SeaBattle
                 StopTimer();
                 WriteToLog(nameUser + " wins: " + countWinsUser);
                 MessageBox.Show("My congratulations, you win!");
+                if (EasterEgg)
+                {
+                    MemeSoundWinUser();
+                    ChangeVisibilityForMeme();
+                }
+                else if (memeMode)
+                {
+                    MemeSoundWinUser();
+                    ChangeVisibilityForMeme();
+                    Gif2.Visibility = Visibility.Visible;
+                }
             }
         }
-        static public void winBot()
+        public static void CheckVisibilityForGif()
         {
-            if (sessionnumber == 1 && userField.GetCountDestroyedShips() == 10)
+            if (Gif1.Visibility == Visibility.Visible || Gif2.Visibility == Visibility.Visible ||
+                Gif3.Visibility == Visibility.Visible || Gif4.Visibility == Visibility.Visible ||
+                Gif5.Visibility == Visibility.Visible || Gif6.Visibility == Visibility.Visible)
+            {
+                Gif1.Visibility = Visibility.Hidden;
+                Gif2.Visibility = Visibility.Hidden;
+                Gif3.Visibility = Visibility.Hidden;
+                Gif4.Visibility = Visibility.Hidden;
+                Gif5.Visibility = Visibility.Hidden;
+                Gif6.Visibility = Visibility.Hidden;
+            }
+        }
+        public static void ChangeVisibilityForMeme()
+        {
+            if (UserMap.Visibility == Visibility.Visible && sessionnumber == 2)
+            {
+                UserMap.Visibility = Visibility.Hidden;
+                EnemyMap.Visibility = Visibility.Hidden;
+                StartGame.Visibility = Visibility.Hidden;
+                ClearField.Visibility = Visibility.Hidden;
+                DeletingMode.Visibility = Visibility.Hidden;
+                RandomizeField.Visibility = Visibility.Hidden;
+                RandomizeEnemyField.Visibility = Visibility.Hidden;
+                if (debugEnemyField || debug)
+                {
+                    DeletingMode.Visibility = Visibility.Hidden;
+                }
+                if (EasterEgg)
+                {
+                    Cheats.Visibility = Visibility.Hidden;
+                    if (win == 1)
+                    {
+                        EasterEggMap.Visibility = Visibility.Visible;
+                    }
+                }
+            }
+            else if (UserMap.Visibility == Visibility.Hidden && sessionnumber == 2)
+            {
+                UserMap.Visibility = Visibility.Visible;
+                EnemyMap.Visibility = Visibility.Visible;
+                StartGame.Visibility = Visibility.Visible;
+                ClearField.Visibility = Visibility.Visible;
+                DeletingMode.Visibility = Visibility.Visible;
+                RandomizeField.Visibility = Visibility.Visible;
+                if (debugEnemyField || debug)
+                {
+                    RandomizeEnemyField.Visibility = Visibility.Visible;
+                }
+                DeletingMode.Visibility = Visibility.Visible;
+                if (EasterEgg)
+                {
+                    Cheats.Visibility = Visibility.Visible;
+                    if (win == 1)
+                    {
+                        EasterEggMap.Visibility = Visibility.Hidden;
+                    }
+                }
+            }
+        }
+        public static void MemeSoundWinUser()
+        {
+            SoundPlayer splayer = new SoundPlayer(Properties.Resources.Win);
+            splayer.Play();
+
+        }
+        public void EasterEggMeme()
+        {
+            UserMap.Visibility = Visibility.Hidden;
+        }
+
+        public static void winBot()
+        {
+            if (sessionnumber == 1 && userField.GetCountDestroyedShips() >= 10)
             {
                 win = 0;
                 sessionnumber++;
                 enemyField.checkAllShip();
                 countWinsBot++;
+                RightSign.Content = "";
+                LeftSign.Content = "";
+                userField.queueWay = -1;
                 StopTimerBot();
                 StopTimer();
                 WriteToLog(" Bot wins: " + countWinsBot);
+                if (memeMode)
+                {
+                    ChangeVisibilityForMeme();
+                    MemeSound();
+                    Gif1.Visibility = Visibility.Visible;
+                }
                 MessageBox.Show("Oh sorry, you lose");
             }
+        }
+        public static void MemeSound()
+        {
+            SoundPlayer splayer = new SoundPlayer(Properties.Resources.meme);
+            WriteToLog("Player on", new StackTrace());
+            splayer.Play();
         }
 
         private void FillEnemyField(object sender, RoutedEventArgs e)
         {
             try
             {
-                if (sessionnumber == 0 && !userField.DoesNotExistAllTypesOfShips())
+                if (sessionnumber == 0 && userField.DoesNotExistAllTypesOfShips())
                 {
-                    sessionnumber++;
                     ReinitializeTimerBlock();
+                    Shipmap.Visibility = Visibility.Hidden;
+                    EnemyMap.Visibility = Visibility.Visible;
+                    enemyField.resetField();
+                    enemyField.PickShips();
+                }
+                else if (sessionnumber == 0)
+                {
+                    ReinitializeTimerBlock();
+                    sessionnumber++;
                     Shipmap.Visibility = Visibility.Hidden;
                     EnemyMap.Visibility = Visibility.Visible;
                     for (int i = 0; i < userField.buttons.Length; i++)
@@ -3548,13 +3963,6 @@ namespace SeaBattle
                     enemyField.PickShips();
                     InitializeSigns();
                     StartTimer();
-                }
-                else if (sessionnumber == 0)
-                {
-                    Shipmap.Visibility = Visibility.Hidden;
-                    EnemyMap.Visibility = Visibility.Visible;
-                    enemyField.resetField();
-                    enemyField.PickShips();
                 }
 
             }
@@ -3572,7 +3980,7 @@ namespace SeaBattle
             int countTheSameCell = 0;
             for (int i = 0; i < userField.ships.Count; i++)
             {
-                for (int j = i; j < enemyField.ships.Count; j++)
+                for (int j = i; j < enemyField.ships.Count;)
                 {
                     countTheSameCell = 0;
                     foreach (var loc in userField.ships[i].locations)
@@ -3603,6 +4011,44 @@ namespace SeaBattle
                 enemyField.PickShips();
             }
         }
+        public void Try1(object sender, RoutedEventArgs e)
+        {
+            RadioButton button = sender as RadioButton;
+            if (!Check1)
+            {
+                MessageBox.Show("One more try");
+                button.Background = Brushes.DarkRed;
+                Check1 = true;
+            }
+        }
+        public void Try2(object sender, RoutedEventArgs e)
+        {
+            EasterEggMap.Visibility = Visibility.Hidden;
+            Gif3.Visibility = Visibility.Visible;
+            Gif4.Visibility = Visibility.Visible;
+            Gif5.Visibility = Visibility.Visible;
+            Gif6.Visibility = Visibility.Visible;
+        }
+        public void Try3(object sender, RoutedEventArgs e)
+        {
+            RadioButton button = sender as RadioButton;
+            if (!Check3)
+            {
+                MessageBox.Show("One more try");
+                button.Background = Brushes.DarkRed;
+                Check3 = true;
+            }
+        }
+        public void Try4(object sender, RoutedEventArgs e)
+        {
+            RadioButton button = sender as RadioButton;
+            if (!Check4)
+            {
+                MessageBox.Show("One more try");
+                button.Background = Brushes.DarkRed;
+                Check4 = true;
+            }
+        }
 
         private void RandomFill(object sender, RoutedEventArgs e)
         {
@@ -3616,6 +4062,21 @@ namespace SeaBattle
                     userField.PickShips();
                     availableShipField.countActiveCell();
                     CheckIdentityField();
+                    if (!enemyField.DoesNotExistAllTypesOfShips())
+                    {
+                        sessionnumber++;
+                        for (int i = 0; i < userField.buttons.Length; i++)
+                        {
+                            for (int j = 0; j < userField.buttons[i].Length; j++)
+                            {
+                                userField.buttons[i][j].Click -= userField.AddShip;
+                                enemyField.buttons[i][j].Click -= enemyField.AddShip;
+                                enemyField.buttons[i][j].Click += enemyField.PickEnemyShip;
+                            }
+                        }
+                        InitializeSigns();
+                        StartTimer();
+                    }
                 }
                 else
                 {

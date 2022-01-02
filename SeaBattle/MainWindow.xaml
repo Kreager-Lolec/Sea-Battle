@@ -18,7 +18,7 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Grid Name="UserMap" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3">
+        <!--<Grid Name="UserMap" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3">
             <Grid.RowDefinitions>
                 <RowDefinition/>
             </Grid.RowDefinitions>
@@ -27,8 +27,8 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Label Content="User Map" Name="UserLabel" FontSize="20" Grid.Row="0" Background="Bisque" Grid.ColumnSpan="11" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-        </Grid>
-        <Grid Name="EnemyMap" Grid.Row="0" Grid.Column="1" Visibility="Hidden" Grid.RowSpan="3">
+        </Grid>-->
+        <!--<Grid Name="EnemyMap" Grid.Row="0" Grid.Column="1" Visibility="Hidden" Grid.RowSpan="3">
             <Grid.RowDefinitions>
                 <RowDefinition/>
             </Grid.RowDefinitions>
@@ -37,7 +37,7 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Label Content="Enemy Map" Name="EnemyLabel" FontSize="20" Grid.Row="0" Grid.Column="2" Background="Bisque" Grid.ColumnSpan="11" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-        </Grid>
+        </Grid>-->
         <Grid Name="Shipmap" Grid.Row="0" Grid.Column="1" Grid.RowSpan="3">
             <Grid.RowDefinitions>
                 <RowDefinition/>
@@ -48,7 +48,7 @@
             </Grid.ColumnDefinitions>
             <Label Content="AvalaibleShips Map" Name="AvailableShipLabel" FontSize="20" Grid.Row="0" Grid.Column="2" Background="Bisque" Grid.ColumnSpan="11" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
         </Grid>
-        <Grid Name="FunctionalMap" Grid.Row="4" Grid.Column="0">
+        <!--<Grid Name="FunctionalMap" Grid.Row="4" Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition/>
@@ -67,10 +67,13 @@
             <Button Content="Start"  Click="Start" Grid.Column="0" Grid.Row="1" Width="70"/>
             <Button Content="Clear your field"  Click="ClearYourField"  Grid.Column="2" Grid.Row="1" />
             <Button Content="Delete the ship" Click="DeleteMode" Grid.Column="1" Grid.Row="1"  />
-            <!--<Button Content="Reset the timer" Click="ResetTimer" Grid.Column="4" Grid.Row="3" HorizontalAlignment="Left"/>-->
+            -->
+        <!--<Button Content="Reset the timer" Click="ResetTimer" Grid.Column="4" Grid.Row="3" HorizontalAlignment="Left"/>-->
+        <!--
             <Button Content="Restart the game" Click="RestartGame" Grid.Column="2" Grid.Row="3" Grid.ColumnSpan="2" HorizontalAlignment="Left"/>
-            <!--<Button Content="Fill Enemy F." Click="FillEnemyField" Grid.Column="1" Grid.Row="3" />-->
-            <Button Content="Random Fill" Click="RandomFill" Grid.Column="0" Grid.Row="3" />
-        </Grid>
+            -->
+        <!--<Button Content="Fill Enemy F." Click="FillEnemyField" Grid.Column="1" Grid.Row="3" />-->
+        <!--<Button Content="Random Fill" Click="RandomFill" Grid.Column="0" Grid.Row="3" />-->
+        <!--</Grid>-->
     </Grid>
 </Window>
