@@ -1,0 +1,214 @@
+[04.01.2022 12:06:31] Tick()-> 01.
+[04.01.2022 12:06:31] -> ----------------.
+[04.01.2022 12:06:31] DeactivateCellAndShip()-> LocState: 1.
+[04.01.2022 12:06:31] DeactivateCellAndShip()-> LocState: 0.
+[04.01.2022 12:06:32] StartTimerBot()-> 0.
+[04.01.2022 12:06:33] Tick()-> 01.
+[04.01.2022 12:06:35] StartTimerBot()-> 0.
+[04.01.2022 12:06:36] Tick()-> 01.
+[04.01.2022 12:06:37] -> ----------------.
+[04.01.2022 12:06:37] DeactivateCellAndShip()-> LocState: 0.
+[04.01.2022 12:06:38] Tick()-> 01.
+[04.01.2022 12:06:39] Tick()-> 02.
+[04.01.2022 12:06:40] Tick()-> 01.
+[04.01.2022 12:06:40] -> ----------------.
+[04.01.2022 12:06:40] DeactivateCellAndShip()-> LocState: 0.
+[04.01.2022 12:06:40] DeactivateCellAndShip()-> LocState: 0.
+[04.01.2022 12:06:41] Tick()-> 01.
+[04.01.2022 12:06:41] StartTimerBot()-> 0.
+[04.01.2022 12:06:43] Tick()-> 01.
+[04.01.2022 12:06:44] StartTimerBot()-> 0.
+[04.01.2022 12:06:45] Tick()-> 01.
+[04.01.2022 12:06:47] StartTimerBot()-> 0.
+[04.01.2022 12:06:48] Tick()-> 01.
+[04.01.2022 12:06:49] StartTimerBot()-> 0.
+[04.01.2022 12:06:50] Tick()-> 01.
+[04.01.2022 12:06:52] Tick()-> 01.
+[04.01.2022 12:06:53] StartTimerBot()-> 0.
+[04.01.2022 12:06:54] Tick()-> 01.
+[04.01.2022 12:06:55] StartTimerBot()-> 0.
+[04.01.2022 12:06:56] Tick()-> 01.
+[04.01.2022 12:06:57] -> ----------------.
+[04.01.2022 12:06:57] DeactivateCellAndShip()-> LocState: 1.
+[04.01.2022 12:06:57] DeactivateCellAndShip()-> LocState: 0.
+[04.01.2022 12:06:57] DeactivateCellAndShip()-> LocState: 1.
+[04.01.2022 12:06:58] Tick()-> 01.
+[04.01.2022 12:06:59] Tick()-> 02.
+[04.01.2022 12:06:59] DeactivateCellOfNotFullDestroyedShip()-> -----------------------------------.
+[04.01.2022 12:06:59] DeactivateCellOfNotFullDestroyedShip()-> Info about ship:  row: 4 cell: 9 Vertical: True Horyzontal: False.
+[04.01.2022 12:06:59] DeactivateCellOfNotFullDestroyedShip()->  Info: 1 Iteration: 0 Size: 3.
+[04.01.2022 12:06:59] DeactivateCellOfNotFullDestroyedShip()-> -----------------------------------.
+[04.01.2022 12:06:59] DeactivateCellOfNotFullDestroyedShip()-> Info about ship:  row: 5 cell: 9 Vertical: True Horyzontal: False.
+[04.01.2022 12:06:59] DeactivateCellOfNotFullDestroyedShip()->  Info: 0 Iteration: 1 Size: 3.
+[04.01.2022 12:06:59] -> NR: -1 RandomOn: 4 CountUsedRoute: 0.
+[04.01.2022 12:06:59] -> NR: -1 RandomOn: 2 CountUsedRoute: 1.
+[04.01.2022 12:06:59] randomRoute()-> i-: 1 i:5.
+[04.01.2022 12:06:59] ->  PickedRow: 4 PickedCell: 9.
+[04.01.2022 12:06:59] DeactivateCellOfNotFullDestroyedShip()-> -----------------------------------.
+[04.01.2022 12:06:59] DeactivateCellOfNotFullDestroyedShip()-> Info about ship:  row: 6 cell: 9 Vertical: True Horyzontal: False.
+[04.01.2022 12:06:59] DeactivateCellOfNotFullDestroyedShip()->  Info: 1 Iteration: 2 Size: 3.
+[04.01.2022 12:06:59] -> ----------------.
+[04.01.2022 12:06:59] DeactivateCellAndShip()-> LocState: 0.
+[04.01.2022 12:06:59] DeactivateCellAndShip()-> LocState: 0.
+[04.01.2022 12:06:59] DeactivateCellAndShip()-> LocState: 1.
+[04.01.2022 12:07:00] Tick()-> 01.
+[04.01.2022 12:07:01] Tick()-> 02.
+[04.01.2022 12:07:01] DeactivateCellOfNotFullDestroyedShip()-> -----------------------------------.
+[04.01.2022 12:07:01] DeactivateCellOfNotFullDestroyedShip()-> Info about ship:  row: 4 cell: 9 Vertical: True Horyzontal: False.
+[04.01.2022 12:07:01] DeactivateCellOfNotFullDestroyedShip()->  Info: 0 Iteration: 0 Size: 3.
+[04.01.2022 12:07:01] -> NR: 2 RandomOff: 2 CountUsedRoute: 3.
+[04.01.2022 12:07:01] randomRoute()-> i-: 0 i:4.
+[04.01.2022 12:07:01] ->  PickedRow: 3 PickedCell: 9.
+[04.01.2022 12:07:01] DeactivateCellOfNotFullDestroyedShip()-> -----------------------------------.
+[04.01.2022 12:07:01] DeactivateCellOfNotFullDestroyedShip()-> Info about ship:  row: 5 cell: 9 Vertical: True Horyzontal: False.
+[04.01.2022 12:07:01] DeactivateCellOfNotFullDestroyedShip()->  Info: 0 Iteration: 1 Size: 3.
+[04.01.2022 12:07:01] -> NR: 1 RandomOff: 1 CountUsedRoute: 3.
+[04.01.2022 12:07:01] randomRoute()-> i+: 1 i: 5.
+[04.01.2022 12:07:01] ->  PickedRow: 6 PickedCell: 9.
+[04.01.2022 12:07:01] DeactivateCellOfNotFullDestroyedShip()-> -----------------------------------.
+[04.01.2022 12:07:01] DeactivateCellOfNotFullDestroyedShip()-> Info about ship:  row: 6 cell: 9 Vertical: True Horyzontal: False.
+[04.01.2022 12:07:01] DeactivateCellOfNotFullDestroyedShip()->  Info: 1 Iteration: 2 Size: 3.
+[04.01.2022 12:07:01] -> ----------------.
+[04.01.2022 12:07:01] DeactivateCellAndShip()-> LocState: 0.
+[04.01.2022 12:07:01] DeactivateCellAndShip()-> LocState: 0.
+[04.01.2022 12:07:01] DeactivateCellAndShip()-> LocState: 0.
+[04.01.2022 12:07:02] Tick()-> 01.
+[04.01.2022 12:07:03] Tick()-> 02.
+[04.01.2022 12:07:04] StartTimerBot()-> 0.
+[04.01.2022 12:07:05] Tick()-> 01.
+[04.01.2022 12:07:06] StartTimerBot()-> 0.
+[04.01.2022 12:07:07] Tick()-> 01.
+[04.01.2022 12:07:09] StartTimerBot()-> 0.
+[04.01.2022 12:07:10] Tick()-> 01.
+[04.01.2022 12:07:12] StartTimerBot()-> 0.
+[04.01.2022 12:07:13] Tick()-> 01.
+[04.01.2022 12:07:14] StartTimerBot()-> 0.
+[04.01.2022 12:07:15] Tick()-> 01.
+[04.01.2022 12:07:17] StartTimerBot()-> 0.
+[04.01.2022 12:07:18] Tick()-> 01.
+[04.01.2022 12:07:19] StartTimerBot()-> 0.
+[04.01.2022 12:07:20] Tick()-> 01.
+[04.01.2022 12:07:22] StartTimerBot()-> 0.
+[04.01.2022 12:07:23] Tick()-> 01.
+[04.01.2022 12:07:24] -> ----------------.
+[04.01.2022 12:07:24] DeactivateCellAndShip()-> LocState: 1.
+[04.01.2022 12:07:24] DeactivateCellAndShip()-> LocState: 0.
+[04.01.2022 12:07:25] Tick()-> 01.
+[04.01.2022 12:07:26] Tick()-> 02.
+[04.01.2022 12:07:26] DeactivateCellOfNotFullDestroyedShip()-> -----------------------------------.
+[04.01.2022 12:07:26] DeactivateCellOfNotFullDestroyedShip()-> Info about ship:  row: 0 cell: 7 Vertical: False Horyzontal: True.
+[04.01.2022 12:07:26] DeactivateCellOfNotFullDestroyedShip()->  Info: 1 Iteration: 0 Size: 2.
+[04.01.2022 12:07:26] DeactivateCellOfNotFullDestroyedShip()-> -----------------------------------.
+[04.01.2022 12:07:26] DeactivateCellOfNotFullDestroyedShip()-> Info about ship:  row: 0 cell: 8 Vertical: False Horyzontal: True.
+[04.01.2022 12:07:26] DeactivateCellOfNotFullDestroyedShip()->  Info: 0 Iteration: 1 Size: 2.
+[04.01.2022 12:07:26] -> NR: -1 RandomOn: 1 CountUsedRoute: 0.
+[04.01.2022 12:07:26] randomRoute()-> i+: 0 i: 0.
+[04.01.2022 12:07:26] ->  PickedRow: 1 PickedCell: 8.
+[04.01.2022 12:07:27] Tick()-> 01.
+[04.01.2022 12:07:28] StartTimerBot()-> 0.
+[04.01.2022 12:07:29] Tick()-> 01.
+[04.01.2022 12:07:30] DeactivateCellOfNotFullDestroyedShip()-> -----------------------------------.
+[04.01.2022 12:07:30] DeactivateCellOfNotFullDestroyedShip()-> Info about ship:  row: 0 cell: 7 Vertical: False Horyzontal: True.
+[04.01.2022 12:07:30] DeactivateCellOfNotFullDestroyedShip()->  Info: 1 Iteration: 0 Size: 2.
+[04.01.2022 12:07:30] DeactivateCellOfNotFullDestroyedShip()-> -----------------------------------.
+[04.01.2022 12:07:30] DeactivateCellOfNotFullDestroyedShip()-> Info about ship:  row: 0 cell: 8 Vertical: False Horyzontal: True.
+[04.01.2022 12:07:30] DeactivateCellOfNotFullDestroyedShip()->  Info: 0 Iteration: 1 Size: 2.
+[04.01.2022 12:07:30] -> NR: -1 RandomOn: 3 CountUsedRoute: 0.
+[04.01.2022 12:07:30] randomRoute()-> j+: 0 j: 8.
+[04.01.2022 12:07:30] ->  PickedRow: 0 PickedCell: 9.
+[04.01.2022 12:07:31] StartTimerBot()-> 0.
+[04.01.2022 12:07:32] Tick()-> 01.
+[04.01.2022 12:07:33] DeactivateCellOfNotFullDestroyedShip()-> -----------------------------------.
+[04.01.2022 12:07:33] DeactivateCellOfNotFullDestroyedShip()-> Info about ship:  row: 0 cell: 7 Vertical: False Horyzontal: True.
+[04.01.2022 12:07:33] DeactivateCellOfNotFullDestroyedShip()->  Info: 1 Iteration: 0 Size: 2.
+[04.01.2022 12:07:33] DeactivateCellOfNotFullDestroyedShip()-> -----------------------------------.
+[04.01.2022 12:07:33] DeactivateCellOfNotFullDestroyedShip()-> Info about ship:  row: 0 cell: 8 Vertical: False Horyzontal: True.
+[04.01.2022 12:07:33] DeactivateCellOfNotFullDestroyedShip()->  Info: 0 Iteration: 1 Size: 2.
+[04.01.2022 12:07:33] -> NR: -1 RandomOn: 3 CountUsedRoute: 0.
+[04.01.2022 12:07:33] -> NR: -1 RandomOn: 4 CountUsedRoute: 1.
+[04.01.2022 12:07:33] randomRoute()-> j-: 1 j: 8.
+[04.01.2022 12:07:33] ->  PickedRow: 0 PickedCell: 7.
+[04.01.2022 12:07:33] -> ----------------.
+[04.01.2022 12:07:33] DeactivateCellAndShip()-> LocState: 0.
+[04.01.2022 12:07:33] DeactivateCellAndShip()-> LocState: 0.
+[04.01.2022 12:07:34] Tick()-> 01.
+[04.01.2022 12:07:35] Tick()-> 02.
+[04.01.2022 12:07:35] StartTimerBot()-> 0.
+[04.01.2022 12:07:36] Tick()-> 01.
+[04.01.2022 12:07:37] -> ----------------.
+[04.01.2022 12:07:37] DeactivateCellAndShip()-> LocState: 1.
+[04.01.2022 12:07:37] DeactivateCellAndShip()-> LocState: 0.
+[04.01.2022 12:07:37] DeactivateCellAndShip()-> LocState: 1.
+[04.01.2022 12:07:37] DeactivateCellAndShip()-> LocState: 1.
+[04.01.2022 12:07:38] Tick()-> 01.
+[04.01.2022 12:07:39] Tick()-> 02.
+[04.01.2022 12:07:39] DeactivateCellOfNotFullDestroyedShip()-> -----------------------------------.
+[04.01.2022 12:07:39] DeactivateCellOfNotFullDestroyedShip()-> Info about ship:  row: 0 cell: 0 Vertical: True Horyzontal: False.
+[04.01.2022 12:07:39] DeactivateCellOfNotFullDestroyedShip()->  Info: 1 Iteration: 0 Size: 4.
+[04.01.2022 12:07:39] DeactivateCellOfNotFullDestroyedShip()-> -----------------------------------.
+[04.01.2022 12:07:39] DeactivateCellOfNotFullDestroyedShip()-> Info about ship:  row: 1 cell: 0 Vertical: True Horyzontal: False.
+[04.01.2022 12:07:39] DeactivateCellOfNotFullDestroyedShip()->  Info: 0 Iteration: 1 Size: 4.
+[04.01.2022 12:07:39] -> NR: -1 RandomOn: 3 CountUsedRoute: 0.
+[04.01.2022 12:07:39] -> NR: -1 RandomOn: 1 CountUsedRoute: 1.
+[04.01.2022 12:07:39] randomRoute()-> i+: 1 i: 1.
+[04.01.2022 12:07:39] ->  PickedRow: 2 PickedCell: 0.
+[04.01.2022 12:07:39] DeactivateCellOfNotFullDestroyedShip()-> -----------------------------------.
+[04.01.2022 12:07:39] DeactivateCellOfNotFullDestroyedShip()-> Info about ship:  row: 2 cell: 0 Vertical: True Horyzontal: False.
+[04.01.2022 12:07:39] DeactivateCellOfNotFullDestroyedShip()->  Info: 1 Iteration: 2 Size: 4.
+[04.01.2022 12:07:39] DeactivateCellOfNotFullDestroyedShip()-> -----------------------------------.
+[04.01.2022 12:07:39] DeactivateCellOfNotFullDestroyedShip()-> Info about ship:  row: 3 cell: 0 Vertical: True Horyzontal: False.
+[04.01.2022 12:07:39] DeactivateCellOfNotFullDestroyedShip()->  Info: 1 Iteration: 3 Size: 4.
+[04.01.2022 12:07:39] -> ----------------.
+[04.01.2022 12:07:39] DeactivateCellAndShip()-> LocState: 1.
+[04.01.2022 12:07:39] DeactivateCellAndShip()-> LocState: 0.
+[04.01.2022 12:07:39] DeactivateCellAndShip()-> LocState: 0.
+[04.01.2022 12:07:39] DeactivateCellAndShip()-> LocState: 1.
+[04.01.2022 12:07:40] Tick()-> 01.
+[04.01.2022 12:07:41] Tick()-> 02.
+[04.01.2022 12:07:41] DeactivateCellOfNotFullDestroyedShip()-> -----------------------------------.
+[04.01.2022 12:07:41] DeactivateCellOfNotFullDestroyedShip()-> Info about ship:  row: 0 cell: 0 Vertical: True Horyzontal: False.
+[04.01.2022 12:07:41] DeactivateCellOfNotFullDestroyedShip()->  Info: 1 Iteration: 0 Size: 4.
+[04.01.2022 12:07:41] DeactivateCellOfNotFullDestroyedShip()-> -----------------------------------.
+[04.01.2022 12:07:41] DeactivateCellOfNotFullDestroyedShip()-> Info about ship:  row: 1 cell: 0 Vertical: True Horyzontal: False.
+[04.01.2022 12:07:41] DeactivateCellOfNotFullDestroyedShip()->  Info: 0 Iteration: 1 Size: 4.
+[04.01.2022 12:07:41] -> NR: 2 RandomOff: 2 CountUsedRoute: 3.
+[04.01.2022 12:07:41] randomRoute()-> i-: 1 i:1.
+[04.01.2022 12:07:41] ->  PickedRow: 0 PickedCell: 0.
+[04.01.2022 12:07:41] DeactivateCellOfNotFullDestroyedShip()-> -----------------------------------.
+[04.01.2022 12:07:41] DeactivateCellOfNotFullDestroyedShip()-> Info about ship:  row: 2 cell: 0 Vertical: True Horyzontal: False.
+[04.01.2022 12:07:41] DeactivateCellOfNotFullDestroyedShip()->  Info: 0 Iteration: 2 Size: 4.
+[04.01.2022 12:07:41] -> NR: 1 RandomOff: 1 CountUsedRoute: 3.
+[04.01.2022 12:07:41] randomRoute()-> i+: 1 i: 2.
+[04.01.2022 12:07:41] ->  PickedRow: 3 PickedCell: 0.
+[04.01.2022 12:07:41] DeactivateCellOfNotFullDestroyedShip()-> -----------------------------------.
+[04.01.2022 12:07:41] DeactivateCellOfNotFullDestroyedShip()-> Info about ship:  row: 3 cell: 0 Vertical: True Horyzontal: False.
+[04.01.2022 12:07:41] DeactivateCellOfNotFullDestroyedShip()->  Info: 1 Iteration: 3 Size: 4.
+[04.01.2022 12:07:41] -> ----------------.
+[04.01.2022 12:07:41] DeactivateCellAndShip()-> LocState: 0.
+[04.01.2022 12:07:41] DeactivateCellAndShip()-> LocState: 0.
+[04.01.2022 12:07:41] DeactivateCellAndShip()-> LocState: 0.
+[04.01.2022 12:07:41] DeactivateCellAndShip()-> LocState: 1.
+[04.01.2022 12:07:42] Tick()-> 01.
+[04.01.2022 12:07:43] Tick()-> 02.
+[04.01.2022 12:07:43] DeactivateCellOfNotFullDestroyedShip()-> -----------------------------------.
+[04.01.2022 12:07:43] DeactivateCellOfNotFullDestroyedShip()-> Info about ship:  row: 0 cell: 0 Vertical: True Horyzontal: False.
+[04.01.2022 12:07:43] DeactivateCellOfNotFullDestroyedShip()->  Info: 0 Iteration: 0 Size: 4.
+[04.01.2022 12:07:43] -> NR: 2 RandomOff: 2 CountUsedRoute: 3.
+[04.01.2022 12:07:43] ->  PickedRow: -1 PickedCell: -1.
+[04.01.2022 12:07:43] DeactivateCellOfNotFullDestroyedShip()-> -----------------------------------.
+[04.01.2022 12:07:43] DeactivateCellOfNotFullDestroyedShip()-> Info about ship:  row: 1 cell: 0 Vertical: True Horyzontal: False.
+[04.01.2022 12:07:43] DeactivateCellOfNotFullDestroyedShip()->  Info: 0 Iteration: 1 Size: 4.
+[04.01.2022 12:07:43] DeactivateCellOfNotFullDestroyedShip()-> -----------------------------------.
+[04.01.2022 12:07:43] DeactivateCellOfNotFullDestroyedShip()-> Info about ship:  row: 2 cell: 0 Vertical: True Horyzontal: False.
+[04.01.2022 12:07:43] DeactivateCellOfNotFullDestroyedShip()->  Info: 0 Iteration: 2 Size: 4.
+[04.01.2022 12:07:43] -> NR: 1 RandomOff: 1 CountUsedRoute: 3.
+[04.01.2022 12:07:43] randomRoute()-> i+: 1 i: 2.
+[04.01.2022 12:07:43] ->  PickedRow: 3 PickedCell: 0.
+[04.01.2022 12:07:43] DeactivateCellOfNotFullDestroyedShip()-> -----------------------------------.
+[04.01.2022 12:07:43] DeactivateCellOfNotFullDestroyedShip()-> Info about ship:  row: 3 cell: 0 Vertical: True Horyzontal: False.
+[04.01.2022 12:07:43] DeactivateCellOfNotFullDestroyedShip()->  Info: 1 Iteration: 3 Size: 4.
+[04.01.2022 12:07:43] -> ----------------.
+[04.01.2022 12:07:43] DeactivateCellAndShip()-> LocState: 0.
+[04.01.2022 12:07:43] DeactivateCellAndShip()-> LocState: 0.
+[04.01.2022 12:07:43] DeactivateCellAndShip()-> LocState: 0.
+[04.01.2022 12:07:43] DeactivateCellAndShip()-> LocState: 0.

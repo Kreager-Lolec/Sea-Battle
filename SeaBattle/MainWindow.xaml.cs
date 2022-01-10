@@ -61,7 +61,7 @@ namespace SeaBattle
         static public string nameUser = "";
         static TextBox NameUser = new TextBox();
         static public bool EasterEgg = false;
-        static bool memeMode = false;
+        static bool memeMode = true;
         static Image Gif1 = new Image();
         static Image Gif2 = new Image();
         static Image Gif3 = new Image();
@@ -3154,8 +3154,8 @@ namespace SeaBattle
                 image2.EndInit();
                 ImageBehavior.SetAnimatedSource(Gif2, image2);
             }
-            //else if (EasterEgg)
-            //{
+            else if (EasterEgg)
+            {
                 var image3 = new BitmapImage();
                 image3.BeginInit();
                 image3.UriSource = new Uri(@"Resources\Dmutro.gif", UriKind.Relative);
@@ -3180,7 +3180,7 @@ namespace SeaBattle
                 Image6.EndInit();
                 ImageBehavior.SetAnimatedSource(Gif6, Image6);
                 GeneralMap.Children.Add(Gif6);
-            //}
+            }
             Grid.SetRow(Gif3, 0);
             Grid.SetRowSpan(Gif3, 2);
             Grid.SetColumn(Gif3, 0);

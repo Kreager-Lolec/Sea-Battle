@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "11e3c020-6015-4360-b983-0b2d2713eab0": {
+      "ProjectGuid": "11e3c020-6015-4360-b983-0b2d2713eab0",
+      "DisplayName": "SeaBattle",
+      "ColorIndex": 0
+    }
+  },
+  "NextColorIndex": 1
+}

@@ -19,3 +19,8 @@ D:\C#projects\SeaBattle\SeaBattle\bin\Debug\WpfAnimatedGif.xml
 D:\C#projects\SeaBattle\SeaBattle\bin\Debug\System.Diagnostics.DiagnosticSource.xml
 D:\C#projects\SeaBattle\SeaBattle\obj\Debug\SeaBattle.csproj.Fody.CopyLocal.cache
 D:\C#projects\SeaBattle\SeaBattle\obj\Debug\SeaBattle.csproj.AssemblyReference.cache
+D:\C#projects\SeaBattle\SeaBattle\obj\Debug\SeaBattle.csproj.SuggestedBindingRedirects.cache
+D:\C#projects\SeaBattle\SeaBattle\bin\Debug\System.Buffers.xml
+D:\C#projects\SeaBattle\SeaBattle\bin\Debug\System.Memory.xml
+D:\C#projects\SeaBattle\SeaBattle\bin\Debug\System.Numerics.Vectors.xml
+D:\C#projects\SeaBattle\SeaBattle\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
