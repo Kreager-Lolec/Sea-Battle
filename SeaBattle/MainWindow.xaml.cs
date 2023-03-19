@@ -3749,7 +3749,9 @@ namespace SeaBattle
                     message += "The ship with addresses: " + "\n";
                     foreach (var loc in s.locations)
                     {
-                        message += "Row: " + loc.row + " Cell: " + loc.cell + "\n";
+                        int displayrow = loc.row + 1;
+                        string displaycell = TransferNumberCellToLetter(loc.cell);
+                        message += "Row: " + displayrow + " Cell: " + displaycell + "\n";
                     }
                 }
             }
@@ -3757,7 +3759,7 @@ namespace SeaBattle
             {
                 MessageBox.Show("You can't start game because of:" +
                 " You have placed or removed the cells of the ships incorectlly" +
-                "\nThe List of the ships: " + "\n" + message + "\nRemove these ships please!");
+                "\nThe List of the ships: " + "\n" + message + "\nRemove or fix these ships please!");
                 return false;
             }
             if (userField.DoesNotExistAllTypesOfShips())
@@ -4093,6 +4095,21 @@ namespace SeaBattle
                 button.Background = Brushes.DarkRed;
                 Check4 = true;
             }
+        }
+
+        public string TransferNumberCellToLetter(int cell)
+        {
+            if (cell == 0) return "A";
+            else if (cell == 1) return "B";
+            else if (cell == 2) return "C";
+            else if (cell == 3) return "D";
+            else if (cell == 4) return "E";
+            else if (cell == 5) return "F";
+            else if (cell == 6) return "G";
+            else if (cell == 7) return "H";
+            else if (cell == 8) return "I";
+            else if (cell == 9) return "J";
+            return cell.ToString();
         }
 
         private void RandomFill(object sender, RoutedEventArgs e)
