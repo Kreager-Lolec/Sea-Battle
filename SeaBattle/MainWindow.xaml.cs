@@ -49,6 +49,7 @@ namespace SeaBattle
         static int seconds = 0;
         static int secondsForBot = 0;
         static int minutes = 0;
+        static int NominalCountofShips = 10;
         static string defaultValueTimer = "00:00";
         static public int limitSecondsForBot = 2;
         Label lTimer = new Label();
@@ -250,6 +251,27 @@ namespace SeaBattle
             public bool DoesNotExistAllTypesOfShips()
             {
                 if (fourcellship >= 1 && threeCellships >= 2 && twoCellShips >= 3 && oneCellShips >= 4)
+                {
+                    return false;
+                }
+                return true;
+            }
+
+            public bool DoesNotExistAllTypesOfShipsWithoutOneCell()
+            {
+                if (fourcellship >= 1 && threeCellships >= 2 && twoCellShips >= 3)
+                {
+                    return false;
+                }
+                return true;
+            }
+
+            public bool LimitOneCell()
+            {
+                int sumOfNonOneCellShips = fourcellship + twoCellShips + threeCellships;
+                int OneCell = NominalCountofShips - sumOfNonOneCellShips;
+                //MessageBox.Show("sumOfNonOneCellShips: " + sumOfNonOneCellShips);
+                if (oneCellShips < OneCell)
                 {
                     return false;
                 }
@@ -1202,7 +1224,7 @@ namespace SeaBattle
                                 buttons[l.row][l.cell].Background = oneCellColor;
                             }
                         }
-                        else if (OCS > 4 && TCS < 3)
+                        else if (OCS > 4 && OCS <= 7 && TCS < 3)
                         {
                             foreach (var l in ship.locations)
                             {
@@ -1213,7 +1235,7 @@ namespace SeaBattle
                                 buttons[l.row][l.cell].Background = twoCellColor;
                             }
                         }
-                        else if (TCS >= 3 && THCS < 2)
+                        else if (TCS >= 3 && THCS < 2 || OCS > 7 && THCS < 3)
                         {
                             foreach (var l in ship.locations)
                             {
@@ -1284,7 +1306,7 @@ namespace SeaBattle
                                         MessageBox.Show("Choose only activated cell to remove the ships please.");
                                         break;
                                     }
-                                    else if (DoesNotExistAllTypesOfShips())
+                                    else if (!LimitOneCell())
                                     {
                                         Location l = new Location();
                                         l.SetLocation(i, j);
@@ -1309,6 +1331,29 @@ namespace SeaBattle
                                                 break;
                                             }
                                             else if (!succesufulAdding)
+                                            {
+                                                MessageBox.Show("You can't connect the two ships into the one.");
+                                            }
+                                            break;
+                                        }
+                                        else MessageBox.Show("You can't place ship there.");
+                                    }
+                                    else if (DoesNotExistAllTypesOfShipsWithoutOneCell())
+                                    {
+                                        Location l = new Location();
+                                        l.SetLocation(i, j);
+                                        if (CheckDiagonalCell(l, LocationsActivity()))//Check cells to add them to the current ship
+                                        {
+                                            bool succesufulAdding = CheckPartition(l);
+                                            if (succesufulAdding)
+                                            {
+                                                break;
+                                            }
+                                            else if (!succesufulAdding)
+                                            {
+                                                MessageBox.Show("You used all one cell ships, please add cells to existing ships, which you can see at the right panel.");
+                                            }
+                                            else
                                             {
                                                 MessageBox.Show("You can't connect the two ships into the one.");
                                             }
